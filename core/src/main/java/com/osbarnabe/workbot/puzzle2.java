@@ -164,7 +164,7 @@ public class puzzle2 implements Screen {
         }
 
         // HUD
-        font.draw(batch, "Score: " + score + " / 10", 10f, HEIGHT - 10f);
+        font.draw(batch, "Pontuação: " + score + " / 10", 10f, HEIGHT - 10f);
 
         batch.end();
     }
