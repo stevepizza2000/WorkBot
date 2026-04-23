@@ -46,7 +46,7 @@ public class GameScreen implements Screen {
     // Texturas do cenário
     private Texture RoboParadoImg, RoboDirImg, RoboEsqImg;
     private Texture fabrica1Img, fabrica2Img, fabrica3Img;
-    private Texture ceitImg, ceu1Img, ceu2Img, localFinalImg;
+    private Texture ceitImg, ceu1Img, ceu2Img, localFinalImg, portinha2Img;
     private Texture trabalhadorImg, trabalhador2Img, trabalhador3Img;
     private Texture inicioImg, portinhaImg;
     private Texture localportaImg, localporta2Img, localporta3Img;
@@ -140,6 +140,7 @@ public class GameScreen implements Screen {
         trabalhador3Img = jogo.assets.get("trabalhador3.png", Texture.class);
         pontoImg       = jogo.assets.get("ponto.png",        Texture.class);
         localFinalImg  = jogo.assets.get("localFinal.png", Texture.class);
+        portinha2Img   = jogo.assets.get("portinha2.png", Texture.class);
         balaoNPC1 = jogo.assets.get("BalaoFala_NPC1.png", Texture.class);
         balaoNPC3 = jogo.assets.get("BalaoFala_NPC3.png", Texture.class);
         animacaoBalao = new Animation<>(0.4f,
@@ -180,9 +181,9 @@ public class GameScreen implements Screen {
         roboY = inicioY;
 
         // Porta 1 → leva ao Puzzle 1 (sorting de itens)
-        porta1 = new Porta(2650f, 0f, 150f, alturaJanela - 259f);
+        porta1 = new Porta(2600f, 0f, 150f, alturaJanela - 259f);
         // Porta 2 → leva ao Puzzle 2 (Flappy Bird)
-        porta2 = new Porta(4750f, 0f, 150f, alturaJanela - 259f);
+        porta2 = new Porta(4600f, 0f, 150f, alturaJanela - 259f);
     }
 
     private boolean pertoDoNPC(float npcX) {
@@ -336,7 +337,8 @@ public class GameScreen implements Screen {
         batch.draw(ceu1Img,        4300, alturaJanela - 259, 700, 259);
         batch.draw(localFinalImg,  4900, 0, 700, alturaJanela-259);
         batch.draw(ceu2Img,        4900, alturaJanela-259, 700, 259);
-        batch.draw(ceitImg,        5600, 0, 700, alturaJanela);
+        batch.draw(ceitImg,        5600, 0, 700, alturaJanela-259);
+        batch.draw(ceu1Img,        5600, alturaJanela-259,700, 259);
 
         // Trabalhadores animados
         batch.draw(animacaoTrabalhador2.getKeyFrame(elapsedTime, true), 2970, 210, 260, 260);
@@ -425,7 +427,8 @@ public class GameScreen implements Screen {
             roboY = 70f;
         }
         batch.draw(frame, roboX, roboY, tamanhoRobo, tamanhoRobo);
-        batch.draw(portinhaImg, 0, 0, 800, alturaJanela - 259);
+        batch.draw(portinhaImg,    0, 0, 800, alturaJanela - 259);
+        batch.draw(portinha2Img,   4900, 0, 700, alturaJanela-259);
 
         // Aviso AFK
         if (tempoAFK <= 5f && tempoAFK > 0f) {
