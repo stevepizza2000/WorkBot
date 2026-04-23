@@ -36,7 +36,7 @@ public class puzzle1 implements Screen {
 
     // Robô
     private float roboX, roboY;
-    private final float tamanhoRobo    = 230f;
+    private final float tamanhoRobo    = 330f;
     private final float velocidadeRobo = 400f;
     private float tempoPressionado     = 0f;
 
@@ -67,7 +67,7 @@ public class puzzle1 implements Screen {
         animacaoDireita  = new Animation<>(0.15f, extrairFrames(RoboDirImg,    64, 64, 2));
         animacaoEsquerda = new Animation<>(0.15f, extrairFrames(RoboEsqImg,    64, 64, 2));
 
-        roboX = 100f;
+        roboX = 70f;
         roboY = 0f;
 
         caixaVerde    = new Caixa(larguraJanela / 2f + 200f, 50f, true);
@@ -157,13 +157,17 @@ public class puzzle1 implements Screen {
         // Animação do robô
         TextureRegion frame;
         if (mostrandoTutorial) {
+            roboY = 5;
             frame = animacaoParado.getKeyFrame(elapsedTime, true);
         } else if (puzzleFinalizado && dir && !esq) {
             frame = animacaoDireita.getKeyFrame(elapsedTime, true);
+            roboY = 0;
         } else if (puzzleFinalizado && esq && !dir) {
             frame = animacaoEsquerda.getKeyFrame(elapsedTime, true);
+            roboY = 0;
         } else {
             frame = animacaoParado.getKeyFrame(elapsedTime, true);
+            roboY = 5;
         }
         batch.draw(frame, roboX, roboY, tamanhoRobo, tamanhoRobo);
 

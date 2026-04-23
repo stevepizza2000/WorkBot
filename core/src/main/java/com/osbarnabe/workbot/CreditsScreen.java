@@ -27,7 +27,7 @@ public class CreditsScreen implements Screen {
 
     private float rolagemY           = -200f;
     private final float velocidadeRolagem = 150f;
-    private final float limiteRolagem     = 2600f;
+    private final float limiteRolagem     = 3450f;
 
     public CreditsScreen(Main jogo) {
         float largura = Gdx.graphics.getWidth();

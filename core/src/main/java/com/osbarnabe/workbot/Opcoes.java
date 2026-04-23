@@ -25,6 +25,8 @@ public class Opcoes implements Screen {
     private boolean botoesLiberados = false;
     private int opcaoSelecionada   = 0;
     private boolean processouBotao = false;
+    float larguraJanela = Gdx.graphics.getWidth();
+    float alturaJanela  = Gdx.graphics.getHeight();
 
     public Opcoes(Main jogo) {
         this.jogo = jogo;
@@ -90,14 +92,14 @@ public class Opcoes implements Screen {
 
         batch.begin();
 
-        batch.draw(opcaoSelecionada == 0 ? btnPortuguesSelect : btnPortugues, 770, 850, 400, 200);
-        batch.draw(opcaoSelecionada == 1 ? btnEspanholSelect  : btnEspanhol,  770, 600, 400, 200);
-        batch.draw(opcaoSelecionada == 2 ? btnInglesSelect    : btnIngles,    770, 350, 400, 200);
-        batch.draw(opcaoSelecionada == 3 ? btnVoltarSelect    : btnVoltar,    770, 100, 400, 200);
+        batch.draw(opcaoSelecionada == 0 ? btnPortuguesSelect : btnPortugues, larguraJanela/2 - 180, alturaJanela/2 + 250, 400, 200);
+        batch.draw(opcaoSelecionada == 1 ? btnEspanholSelect  : btnEspanhol,  larguraJanela/2 - 180, alturaJanela/2, 400, 200);
+        batch.draw(opcaoSelecionada == 2 ? btnInglesSelect    : btnIngles,    larguraJanela/2 - 180, alturaJanela/2 -250, 400, 200);
+        batch.draw(opcaoSelecionada == 3 ? btnVoltarSelect    : btnVoltar,    larguraJanela/2 - 180, alturaJanela/2 - 500, 400, 200);
 
         if (tempoAFK <= 5f && tempoAFK > 0f) {
             int seg = (int) Math.ceil(tempoAFK);
-            font.draw(batch, "O jogo vai fechar em: " + seg, 620f, 930f);
+            font.draw(batch, "As opções vão fechar em: " + seg, larguraJanela/2 - 300, alturaJanela - 80);
         }
 
         batch.end();

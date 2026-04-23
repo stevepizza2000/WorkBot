@@ -37,7 +37,7 @@ public class ObjetoCaindo {
 
     /** Move o objeto para o lado esquerdo da tela (caixa vermelha). */
     public void irEsquerda() {
-        x = larguraJanela / 2f - 150f;
+        x = larguraJanela / 2f - 160f;
     }
 
     public void draw(SpriteBatch batch) {

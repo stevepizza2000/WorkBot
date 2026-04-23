@@ -55,7 +55,7 @@ public class GameScreen implements Screen {
     // Posição do robô
     private float roboX;
     private float roboY;
-    private final float tamanhoRobo  = 230f;
+    private final float tamanhoRobo  = 330f;
     private final float velocidadeRobo = 400f;
 
     float larguraJanela = Gdx.graphics.getWidth();
@@ -73,7 +73,7 @@ public class GameScreen implements Screen {
     private float retornoY;
 
     public GameScreen(Main jogo) {
-        this(jogo, 200f, 50f);
+        this(jogo, 100f, 65f);
     }
 
     /** Construtor que permite posicionar o robô em um ponto específico (ex.: ao voltar de um puzzle). */
@@ -176,6 +176,9 @@ public class GameScreen implements Screen {
         // Limite esquerdo
         if (roboX < 0f) roboX = 0f;
 
+        // Limite direito
+        if (roboX > 6050f) roboX = 6050f;
+
         // Câmera segue o robô
         camera.position.x = roboX + (tamanhoRobo / 2f);
         if (camera.position.x < viewport.getWorldWidth() / 2f)
@@ -208,9 +211,9 @@ public class GameScreen implements Screen {
         batch.draw(ceitImg,        5600, 0, 700, alturaJanela);
 
         // Trabalhadores animados
-        batch.draw(animacaoTrabalhador.getKeyFrame(elapsedTime, true),  1850, 150, 190, 190);
-        batch.draw(animacaoTrabalhador2.getKeyFrame(elapsedTime, true), 3000, 150, 190, 190);
-        batch.draw(animacaoTrabalhador3.getKeyFrame(elapsedTime, true), 3800, 140, 300, 300);
+        batch.draw(animacaoTrabalhador.getKeyFrame(elapsedTime, true),  1820, 210, 260, 260);
+        batch.draw(animacaoTrabalhador2.getKeyFrame(elapsedTime, true), 2970, 210, 260, 260);
+        batch.draw(animacaoTrabalhador3.getKeyFrame(elapsedTime, true), 3770, 170, 380, 380);
 
         // Pontos de exclamação
         batch.draw(animacaoPonto.getKeyFrame(elapsedTime, true),  1900, 310, 100, 100);
@@ -220,13 +223,13 @@ public class GameScreen implements Screen {
         TextureRegion frame;
         if (dir && !esq) {
             frame = animacaoDireita.getKeyFrame(elapsedTime, true);
-            roboY = 50f;
+            roboY = 65f;
         } else if (esq && !dir) {
             frame = animacaoEsquerda.getKeyFrame(elapsedTime, true);
-            roboY = 50f;
+            roboY = 65f;
         } else {
             frame = animacaoParado.getKeyFrame(elapsedTime, true);
-            roboY = 55f;
+            roboY = 70f;
         }
         batch.draw(frame, roboX, roboY, tamanhoRobo, tamanhoRobo);
         batch.draw(portinhaImg, 0, 0, 800, alturaJanela - 259);

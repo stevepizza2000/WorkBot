@@ -111,7 +111,7 @@ public class MenuScreen implements Screen {
         // Aviso AFK
         if (tempoAFK <= 5f && tempoAFK > 0f) {
             int seg = (int) Math.ceil(tempoAFK);
-            fontAviso.draw(batch, "O jogo vai fechar em: " + seg, 620f, 930f);
+            fontAviso.draw(batch, "O jogo vai fechar em: " + seg, larguraJanela/2 - 300, alturaJanela - 80);
         }
         batch.end();
     }
