@@ -39,6 +39,7 @@ public class GameScreen implements Screen {
 
     // Cronômetro AFK
     private float tempoAFK = 15f;
+    private final float tempoMaxAFK = 20f;
     private final float limiteAFK = 0f;
     private BitmapFont fonte;
 
@@ -71,6 +72,36 @@ public class GameScreen implements Screen {
     // Posição de retorno do robô ao voltar de cada puzzle
     private float retornoX;
     private float retornoY;
+
+    private boolean dialogoAtivo = false;
+    private Texture balaoNPC1;
+
+    private float npc1X = 1850f; // mesma posição do trabalhador
+    private float npc1Y = 150f;
+    private float raioInteracao = 150f;
+
+    private boolean podeInteragir = true;
+
+    private Animation<TextureRegion> animacaoBalao;
+
+    float tempoAviso = dialogoAtivo ? 15f : 5f;
+
+    private boolean bloqueioNPC = true;
+
+    private boolean dialogoNPC3 = false;
+
+    private float npc3X = 3800f; // usa a mesma posição do trabalhador3
+    private float npc3Y = 140f;
+
+    private Texture balaoNPC3;
+    private Animation<TextureRegion> animacaoBalaoNPC3;
+
+    private boolean npc3JaFalou = false;
+
+    private boolean bloqueioNPC3 = true;
+
+    private Texture botaoIntImg;
+    private Animation<TextureRegion> animacaoBotao;
 
     public GameScreen(Main jogo) {
         this(jogo, 100f, 65f);
@@ -109,6 +140,16 @@ public class GameScreen implements Screen {
         trabalhador3Img = jogo.assets.get("trabalhador3.png", Texture.class);
         pontoImg       = jogo.assets.get("ponto.png",        Texture.class);
         localFinalImg  = jogo.assets.get("localFinal.png", Texture.class);
+        balaoNPC1 = jogo.assets.get("BalaoFala_NPC1.png", Texture.class);
+        balaoNPC3 = jogo.assets.get("BalaoFala_NPC3.png", Texture.class);
+        animacaoBalao = new Animation<>(0.4f,
+            extrairFrames(balaoNPC1,
+                balaoNPC1.getWidth(),
+                balaoNPC1.getHeight() / 2,
+                2
+            )
+        );
+        botaoIntImg = jogo.assets.get("botaoInt.png", Texture.class);
 
         // Monta as animações
         animacaoParado      = new Animation<>(0.45f, extrairFrames(RoboParadoImg,  64,  64, 7));
@@ -119,6 +160,21 @@ public class GameScreen implements Screen {
         animacaoTrabalhador3 = new Animation<>(0.45f, extrairFrames(trabalhador3Img, 100, 100, 6));
         animacaoPonto       = new Animation<>(0.45f, extrairFrames(pontoImg,  50, 50, 8));
         animacaoPonto2      = new Animation<>(0.45f, extrairFrames(pontoImg,  50, 50, 8));
+        animacaoBotao = new Animation<>(0.3f,
+            extrairFrames(botaoIntImg,
+                300,  // largura inteira
+                106,  // metade da altura
+                2     // 2 frames
+            )
+        );
+        animacaoBalaoNPC3 = new Animation<>(0.4f,
+            extrairFrames(
+                balaoNPC3,
+                balaoNPC3.getWidth(),       // largura inteira
+                balaoNPC3.getHeight() / 2,  // dividido verticalmente
+                2
+            )
+        );
 
         roboX = inicioX;
         roboY = inicioY;
@@ -127,6 +183,13 @@ public class GameScreen implements Screen {
         porta1 = new Porta(2650f, 0f, 150f, alturaJanela - 259f);
         // Porta 2 → leva ao Puzzle 2 (Flappy Bird)
         porta2 = new Porta(4750f, 0f, 150f, alturaJanela - 259f);
+    }
+
+    private boolean pertoDoNPC(float npcX) {
+        float centroRobo = roboX + (tamanhoRobo / 2f);
+        float centroNPC = npcX + (190f / 2f); // largura do NPC
+
+        return Math.abs(centroRobo - centroNPC) < raioInteracao;
     }
 
     @Override
@@ -147,6 +210,54 @@ public class GameScreen implements Screen {
         boolean dir = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 
         elapsedTime += delta;
+
+        //interação NPCs
+        if (esq && dir) {
+            tempoAFK = 10f;
+
+            if (podeInteragir) {
+
+                if (dialogoAtivo) {
+                    dialogoAtivo = false;
+                    bloqueioNPC = false;
+                }
+                else if (pertoDoNPC(npc1X)) {
+                    dialogoAtivo = true;
+                    tempoAFK = tempoMaxAFK;
+                }
+
+                else if (pertoDoNPC(npc3X)) {
+
+                    if (dialogoNPC3) {
+                        // FECHA
+                        dialogoNPC3 = false;
+                    } else {
+                        // ABRE
+                        dialogoNPC3 = true;
+                    }
+                    npc3JaFalou = true;
+                    bloqueioNPC3 = false;
+                }
+
+
+                else if (colideComPorta(porta1)) {
+                    porta1.interagir();
+                }
+                else if (colideComPorta(porta2)) {
+                    porta2.interagir();
+                }
+
+                podeInteragir = false;
+            }
+        } else {
+            podeInteragir = true;
+        }
+
+        if (dialogoAtivo || dialogoNPC3) {
+            esq = false;
+            dir = false;
+            tempoAFK = tempoMaxAFK;
+        }
 
         // Interação (esq + dir juntos)
         if (esq && dir) {
@@ -178,6 +289,23 @@ public class GameScreen implements Screen {
 
         // Limite direito
         if (roboX > 6050f) roboX = 6050f;
+
+        //barreira NPCs
+        if (bloqueioNPC) {
+            float limite = 2300f; // posição da porta 1 (ajusta se precisar)
+
+            if (roboX + tamanhoRobo > limite) {
+                roboX = limite - tamanhoRobo;
+            }
+        }
+
+        if (bloqueioNPC3) {
+            float limiteNPC3 = 4300f; // posição da porta (ajusta se precisar)
+
+            if (roboX + tamanhoRobo > limiteNPC3) {
+                roboX = limiteNPC3 - tamanhoRobo;
+            }
+        }
 
         // Câmera segue o robô
         camera.position.x = roboX + (tamanhoRobo / 2f);
@@ -211,13 +339,78 @@ public class GameScreen implements Screen {
         batch.draw(ceitImg,        5600, 0, 700, alturaJanela);
 
         // Trabalhadores animados
-        batch.draw(animacaoTrabalhador.getKeyFrame(elapsedTime, true),  1820, 210, 260, 260);
         batch.draw(animacaoTrabalhador2.getKeyFrame(elapsedTime, true), 2970, 210, 260, 260);
         batch.draw(animacaoTrabalhador3.getKeyFrame(elapsedTime, true), 3770, 170, 380, 380);
 
-        // Pontos de exclamação
-        batch.draw(animacaoPonto.getKeyFrame(elapsedTime, true),  1900, 310, 100, 100);
-        batch.draw(animacaoPonto2.getKeyFrame(elapsedTime, true), 3850, 340, 100, 100);
+        // BOTOES E PONTO DE EXCLAMAÇÃO
+        if (pertoDoNPC(npc1X)) {
+
+            // 🔘 Botão (AGORA também aparece durante diálogo)
+            TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
+
+            float escala = 0.45f;
+            float largura = frameBotao.getRegionWidth() * escala;
+            float altura  = frameBotao.getRegionHeight() * escala;
+
+            float x = npc1X + (200f / 2f) - (largura / 2f);
+            float y = npc1Y + 320f;
+
+            batch.draw(frameBotao, x, y, largura, altura);
+
+        } else if (bloqueioNPC) {
+
+            // ❗ Só aparece antes de falar com NPC
+            batch.draw(animacaoPonto.getKeyFrame(elapsedTime, true),
+                1904, 437, 100, 100);
+        }
+        batch.draw(animacaoTrabalhador.getKeyFrame(elapsedTime, true),  1820, 210, 260, 260);
+
+        // BALÃO DE FALA
+        if (dialogoAtivo) {
+            TextureRegion frameBalao = animacaoBalao.getKeyFrame(elapsedTime, true);
+
+            float larguraBalao = 800f;
+            float alturaBalao  = 400f;
+
+            float x = camera.position.x - larguraBalao / 2f;
+            float y = camera.position.y + (alturaJanela / 2f) - alturaBalao - 50f;
+
+            batch.draw(frameBalao, x, y, larguraBalao, alturaBalao);
+        }
+
+        if (dialogoNPC3) {
+            TextureRegion frame = animacaoBalaoNPC3.getKeyFrame(elapsedTime, true);
+
+            float larguraBalao = 800f;
+            float alturaBalao = 400f;
+
+            float x = camera.position.x - larguraBalao / 2f;
+            float y = camera.position.y + (alturaJanela / 2f) - alturaBalao - 50f;
+
+            batch.draw(frame, x, y, larguraBalao, alturaBalao);
+        }
+
+        // BOTÃO DE INTERAÇÃO NPC3
+        if (pertoDoNPC(npc3X)) {
+
+            // 🔘 BOTÃO (continua normal)
+            TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
+
+            float escala = 0.6f;
+            float largura = frameBotao.getRegionWidth() * escala;
+            float altura  = frameBotao.getRegionHeight() * escala;
+
+            float x = 3850 + (100f / 2f) - (largura / 2f);
+            float y = 510;
+
+            batch.draw(frameBotao, x, y, largura, altura);
+
+        } else if (!npc3JaFalou) {
+
+            // ❗ SÓ aparece se NUNCA falou com o NPC
+            batch.draw(animacaoPonto2.getKeyFrame(elapsedTime, true),
+                3830, 470, 150, 150);
+        }
 
         // Robô
         TextureRegion frame;

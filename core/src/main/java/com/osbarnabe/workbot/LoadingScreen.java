@@ -46,9 +46,11 @@ public class LoadingScreen implements Screen {
         jogo.assets.load("trabalhador3.png", Texture.class);
         jogo.assets.load("porta.png",        Texture.class);
         jogo.assets.load("ponto.png",        Texture.class);
-        jogo.assets.load("BalaoFala.png",    Texture.class);
         jogo.assets.load("trabalhador1flnd.png", Texture.class);
         jogo.assets.load("localFinal.png", Texture.class);
+        jogo.assets.load("BalaoFala_NPC1.png", Texture.class);
+        jogo.assets.load("BalaoFala_NPC3.png", Texture.class);
+        jogo.assets.load("botaoInt.png", Texture.class);
     }
 
     @Override
