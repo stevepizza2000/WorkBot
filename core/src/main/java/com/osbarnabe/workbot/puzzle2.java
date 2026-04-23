@@ -134,7 +134,7 @@ public class puzzle2 implements Screen {
 
         if (canos.size > 0 && canos.first().x < -60f) canos.removeIndex(0);
 
-        // 5. COLISÃO (Dá o "tranco" natural)
+        // 5. COLISÃO (Diferencia frente x dentro)
         bird.set(85f, birdY + 5f, 30f, 30f);
 
         for (Cano c : canos) {
@@ -145,20 +145,34 @@ public class puzzle2 implements Screen {
             pipeTop.set(c.x + margem, topY, pipeWidth - margem * 2f, HEIGHT - topY);
 
             if (bird.overlaps(pipeBottom) || bird.overlaps(pipeTop)) {
-                // Em vez de teleportar, damos uma velocidade de recuo alta
-                // Isso faz os canos "fugirem" do pássaro suavemente
-                if (recuoX < 400f) { // Evita acumular força infinita se ficar encostado
-                    recuoX = 500f;
-                }
 
-                // Dá um pequeno "totó" vertical para não ficar colado no cano
-                if (birdY + 15f < c.gapY) velY = -100f;
-                else velY = 100f;
+                // Calcula se bateu de frente ou se já está dentro
+                float birdRight = 85f + 30f; // Lado direito do pássaro
+                float pipeLeft = c.x + margem; // Lado esquerdo do cano
+                float penetracaoX = birdRight - pipeLeft; // O quanto o pássaro entrou no cano
+
+                // Se entrou menos de 15 pixels, consideramos que bateu de frente (EXTERNO)
+                if (penetracaoX < 15f) {
+                    if (recuoX < 400f) {
+                        recuoX = 500f; // Joga o mundo para trás
+                    }
+                    // Pequeno ajuste vertical de susto
+                    if (birdY + 15f < c.gapY) velY = -50f;
+                    else velY = 50f;
+
+                } else {
+                    // Já passou da borda, então bateu por dentro (INTERNO)
+                    if (bird.overlaps(pipeBottom)) {
+                        velY = 180f; // Bateu no cano de baixo, sobe suavemente
+                    } else if (bird.overlaps(pipeTop)) {
+                        velY = -180f; // Bateu a cabeça no teto, desce suavemente
+                    }
+                }
             }
 
-            // 6. PONTUAÇÃO (Pontua sempre que passar, mesmo batendo)
+            // 6. PONTUAÇÃO (Pontua sempre que passar)
             if (c.x + pipeWidth < 80f && !c.passou) {
-                score++; // Aumenta o score se a traseira do cano passou do pássaro
+                score++;
                 c.passou = true;
             }
         }
