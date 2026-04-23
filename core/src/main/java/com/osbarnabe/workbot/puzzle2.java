@@ -29,6 +29,15 @@ public class puzzle2 implements Screen {
     private Texture texPipeUp;
     private Texture texBackground;
 
+    //variaveis para a colisão dos canos
+
+
+
+    //retangulos
+    private Rectangle bird;
+    private Rectangle pipeBottom;
+    private Rectangle pipeTop;
+
     // Dimensões da viewport do mini-jogo
     public static final int WIDTH  = 300;
     public static final int HEIGHT = 480;
@@ -38,8 +47,12 @@ public class puzzle2 implements Screen {
     private float velY     = 0f;
     private final float GRAVIDADE = -750f;
     private final float PULO      = 250f;
+    private float velX = 0f; // Velocidade horizontal para o rebote
+    private final float REBOTE_X = -150f; // Força do empurrão para trás
 
     // Canos
+    float pipeWidth = 35f;
+    float margem    = 5f;
     private static class Cano {
         float x;
         float gapY;
@@ -67,6 +80,10 @@ public class puzzle2 implements Screen {
         texPipeUp     = new Texture("pipe_up.png");
         texBackground = new Texture("fundo_puzzle2.png");
 
+        bird = new Rectangle();
+        pipeBottom = new Rectangle();
+        pipeTop = new Rectangle();
+
         canos = new Array<>();
     }
 
@@ -90,7 +107,7 @@ public class puzzle2 implements Screen {
 
         // Spawn de canos
         tempoSpawn += delta;
-        if (tempoSpawn > 2f) {
+        if (tempoSpawn > 1.3f) {
             tempoSpawn = 0f;
             Cano c = new Cano();
             c.x    = WIDTH;
@@ -99,27 +116,43 @@ public class puzzle2 implements Screen {
         }
 
         // Move canos
-        for (Cano c : canos) c.x -= velocidadeCano * delta;
+        for (Cano c : canos) {
+            c.x -= (velocidadeCano + velX) * delta;
+        }
 
         // Remove cano que saiu da tela
         if (canos.size > 0 && canos.first().x < -50f) canos.removeIndex(0);
 
         // Colisões
-        Rectangle bird = new Rectangle(85f, birdY + 5f, 30f, 30f);
-        float pipeWidth = 50f;
-        float margem    = 5f;
+        bird.set(80f, birdY, 35f, 35f);
 
         for (Cano c : canos) {
             float bottomHeight = c.gapY - gap / 2f;
             float topY         = c.gapY + gap / 2f;
-            float topHeight    = HEIGHT - topY;
 
-            Rectangle pipeBottom = new Rectangle(c.x + margem, 0f,   pipeWidth - margem * 2f, bottomHeight);
-            Rectangle pipeTop    = new Rectangle(c.x + margem, topY, pipeWidth - margem * 2f, topHeight);
+            pipeBottom.set(c.x + margem, 0f, pipeWidth - margem * 2f, bottomHeight);
+            pipeTop.set(c.x + margem, topY, pipeWidth - margem * 2f, HEIGHT - topY);
 
             if (bird.overlaps(pipeBottom) || bird.overlaps(pipeTop)) {
-                resetGame();
-                return;
+
+                // 1. REBOTE HORIZONTAL: Empurra TODOS os canos para a direita simulando recuo
+                float forcaReboteX = 40f;
+                for (Cano canoAtual : canos) {
+                    canoAtual.x += forcaReboteX;
+                }
+
+                // 2. O SEGREDO: Atrasa o timer do próximo cano para manter a distância exata!
+                tempoSpawn -= (forcaReboteX / velocidadeCano);
+
+                // 3. PEQUENO REBOTE VERTICAL
+                if (birdY < c.gapY) {
+                    velY = -150f; // Bateu na metade de baixo, dá um tranquinho pra baixo
+                } else {
+                    velY = 150f;  // Bateu na metade de cima, dá um tranquinho pra cima
+                }
+
+                // Para o loop aqui para não calcular colisão dupla no mesmo frame
+                break;
             }
 
             // Contagem de score
@@ -129,8 +162,17 @@ public class puzzle2 implements Screen {
             }
         }
 
-        // Caiu no chão
-        if (birdY < 0f) resetGame();
+        //não deixar bater no chão
+        if (birdY < 0f) {
+            birdY = 0f;
+            if (velY < 0) velY = 0;
+        }
+
+        // não deixar baeter no teto
+        if (birdY > HEIGHT - 40f) {
+            birdY = HEIGHT - 40f;
+            if (velY > 0) velY = 0;
+        }
 
         // Condição de vitória → volta ao GameScreen próximo à Porta 2
         if (score >= 10) {
@@ -159,8 +201,8 @@ public class puzzle2 implements Screen {
         for (Cano c : canos) {
             float bottomHeight = c.gapY - gap / 2f;
             float topY         = c.gapY + gap / 2f;
-            batch.draw(texPipeDown, c.x, 0f,  50f, bottomHeight);
-            batch.draw(texPipeUp,   c.x, topY, 50f, HEIGHT - topY);
+            batch.draw(texPipeDown, c.x, 0f,  pipeWidth, bottomHeight);
+            batch.draw(texPipeUp,   c.x, topY, pipeWidth, HEIGHT - topY);
         }
 
         // HUD
