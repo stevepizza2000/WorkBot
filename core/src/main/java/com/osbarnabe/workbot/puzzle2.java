@@ -30,7 +30,9 @@ public class puzzle2 implements Screen {
     private Texture texBackground;
 
     //variaveis para a colisão dos canos
-
+    private float recuoX = 0f;          // Velocidade extra de empurrão (horizontal)
+    private float distanciaPercorrida = 0f; // Substitui o tempoSpawn
+    private final float DISTANCIA_ENTRE_CANOS = 220f; // Espaço fixo entre um cano e outro
 
 
     //retangulos
@@ -96,85 +98,82 @@ public class puzzle2 implements Screen {
     }
 
     private void update(float delta) {
-        // Física do pássaro
-        velY  += GRAVIDADE * delta;
+        // 1. FÍSICA DO PÁSSARO (Mantém o pulo original e natural)
+        velY += GRAVIDADE * delta;
         birdY += velY * delta;
 
-        // Pulo com ESPAÇO
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            velY = PULO;
+            velY = PULO; // O pulo agora funciona independente da colisão
         }
 
-        // Spawn de canos
-        tempoSpawn += delta;
-        if (tempoSpawn > 1.3f) {
-            tempoSpawn = 0f;
+        // 2. FÍSICA DO RECUO (Suaviza o impacto sem teleportar)
+        if (recuoX > 0) {
+            recuoX -= 800f * delta; // "Atrito" que faz o recuo parar suavemente
+            if (recuoX < 0) recuoX = 0;
+        }
+
+        // VELOCIDADE REAL DO MUNDO: Velocidade padrão menos o recuo da batida
+        float vEfetiva = velocidadeCano - recuoX;
+
+        // 3. SPAWN POR DISTÂNCIA (Resolve o erro dos canos grudados)
+        // Só acumulamos distância se a velocidade efetiva for positiva
+        distanciaPercorrida += vEfetiva * delta;
+
+        if (distanciaPercorrida >= DISTANCIA_ENTRE_CANOS) {
+            distanciaPercorrida = 0; // Reseta o contador de distância
             Cano c = new Cano();
-            c.x    = WIDTH;
-            c.gapY = MathUtils.random(100, 350);
+            c.x = WIDTH;
+            c.gapY = MathUtils.random(120, 340);
             canos.add(c);
         }
 
-        // Move canos
+        // 4. MOVIMENTAÇÃO DOS CANOS
         for (Cano c : canos) {
-            c.x -= (velocidadeCano + velX) * delta;
+            c.x -= vEfetiva * delta;
         }
 
-        // Remove cano que saiu da tela
-        if (canos.size > 0 && canos.first().x < -50f) canos.removeIndex(0);
+        if (canos.size > 0 && canos.first().x < -60f) canos.removeIndex(0);
 
-        // Colisões
-        bird.set(80f, birdY, 35f, 35f);
+        // 5. COLISÃO (Dá o "tranco" natural)
+        bird.set(85f, birdY + 5f, 30f, 30f);
 
         for (Cano c : canos) {
             float bottomHeight = c.gapY - gap / 2f;
-            float topY         = c.gapY + gap / 2f;
+            float topY = c.gapY + gap / 2f;
 
             pipeBottom.set(c.x + margem, 0f, pipeWidth - margem * 2f, bottomHeight);
             pipeTop.set(c.x + margem, topY, pipeWidth - margem * 2f, HEIGHT - topY);
 
             if (bird.overlaps(pipeBottom) || bird.overlaps(pipeTop)) {
-
-                // 1. REBOTE HORIZONTAL: Empurra TODOS os canos para a direita simulando recuo
-                float forcaReboteX = 40f;
-                for (Cano canoAtual : canos) {
-                    canoAtual.x += forcaReboteX;
+                // Em vez de teleportar, damos uma velocidade de recuo alta
+                // Isso faz os canos "fugirem" do pássaro suavemente
+                if (recuoX < 400f) { // Evita acumular força infinita se ficar encostado
+                    recuoX = 500f;
                 }
 
-                // 2. O SEGREDO: Atrasa o timer do próximo cano para manter a distância exata!
-                tempoSpawn -= (forcaReboteX / velocidadeCano);
-
-                // 3. PEQUENO REBOTE VERTICAL
-                if (birdY < c.gapY) {
-                    velY = -150f; // Bateu na metade de baixo, dá um tranquinho pra baixo
-                } else {
-                    velY = 150f;  // Bateu na metade de cima, dá um tranquinho pra cima
-                }
-
-                // Para o loop aqui para não calcular colisão dupla no mesmo frame
-                break;
+                // Dá um pequeno "totó" vertical para não ficar colado no cano
+                if (birdY + 15f < c.gapY) velY = -100f;
+                else velY = 100f;
             }
 
-            // Contagem de score
+            // 6. PONTUAÇÃO (Pontua sempre que passar, mesmo batendo)
             if (c.x + pipeWidth < 80f && !c.passou) {
-                if (score < 10) score++;
+                score++; // Aumenta o score se a traseira do cano passou do pássaro
                 c.passou = true;
             }
         }
 
-        //não deixar bater no chão
+        // Limites de tela
         if (birdY < 0f) {
             birdY = 0f;
             if (velY < 0) velY = 0;
         }
 
-        // não deixar baeter no teto
         if (birdY > HEIGHT - 40f) {
             birdY = HEIGHT - 40f;
             if (velY > 0) velY = 0;
         }
 
-        // Condição de vitória → volta ao GameScreen próximo à Porta 2
         if (score >= 10) {
             jogo.setScreen(new GameScreen(jogo, 4600f, 50f));
         }
