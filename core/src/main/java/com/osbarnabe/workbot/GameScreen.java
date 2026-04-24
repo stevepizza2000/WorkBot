@@ -38,7 +38,7 @@ public class GameScreen implements Screen {
     private float elapsedTime = 0f;
 
     // Cronômetro AFK
-    private float tempoAFK = 10f;
+    private float tempoAFK = 15f;
     private final float tempoMaxAFK = 20f;
     private final float limiteAFK = 0f;
     private BitmapFont fonte;
