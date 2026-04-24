@@ -49,6 +49,10 @@ public class puzzle1 implements Screen {
     private int itensCertos            = 0;
     private boolean puzzleFinalizado   = false;
 
+    // Variáveis da Barra de Ferro caindo
+    private float barraX;
+    private float barraY;
+
     public puzzle1(Main jogo) {
         this.jogo = jogo;
         batch = new SpriteBatch();
@@ -113,7 +117,11 @@ public class puzzle1 implements Screen {
                     else if (objeto.x < larguraJanela / 2f - 100f) verificarAcerto(caixaVermelha);
 
                     if (itensCertos >= 3) {
-                        puzzleFinalizado = true;
+                        puzzleFinalizado = true; // DESTRANCA O JOGO
+
+                        // Define onde a barra de ferro nasce
+                        barraX = larguraJanela / 2f - 50f;
+                        barraY = alturaJanela / 2f - 280f; // Mesma altura que os objetos caem
                     } else {
                         objeto.dispose();
                         spawnObjeto();
@@ -132,9 +140,27 @@ public class puzzle1 implements Screen {
                     tempoPressionado = 0f;
                 }
 
-                // Sair do puzzle com SPACE
-                if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                    jogo.setScreen(new GameScreen(jogo));
+                // LÓGICA: A barra cai e o robô pega!
+                if (barraY > 50f) {
+                    barraY -= 150f * delta; // Velocidade de queda
+                }
+
+                float larguraBarra = 100f;
+                float alturaBarra = 64f;
+
+                // AJUSTE DA HIT BOX DO ROBÔ
+                float margemX = 120f;
+                float alturaCorpoRobo = 100f;
+
+                // Checagem de Colisão
+                boolean colidiuX = (roboX + margemX) < (barraX + larguraBarra) && (roboX + tamanhoRobo - margemX) > barraX;
+                boolean colidiuY = roboY < (barraY + alturaBarra) && (roboY + alturaCorpoRobo) > barraY;
+
+                // Se tocou, volta pro GameScreen na posição da Porta 1 (X=2650f, Y=50f)
+                if (colidiuX && colidiuY) {
+                    jogo.npc1Completo = true; // 🔥 ESSENCIAL
+                    jogo.puzzle1Completo = true;
+                    jogo.setScreen(new GameScreen(jogo, 2650f, 65f));
                 }
             }
 
@@ -149,8 +175,12 @@ public class puzzle1 implements Screen {
         if (mostrandoTutorial) batch.setColor(0.3f, 0.3f, 0.3f, 1f);
 
         batch.draw(estoqueImg, 0, 0, larguraJanela, alturaJanela);
-        caixaVerde.draw(batch);
-        caixaVermelha.draw(batch);
+
+        // AS CAIXAS SÓ SÃO DESENHADAS SE O PUZZLE AINDA NÃO ACABOU (Assim elas somem no final!)
+        if (!puzzleFinalizado) {
+            caixaVerde.draw(batch);
+            caixaVermelha.draw(batch);
+        }
 
         if (!puzzleFinalizado && !mostrandoTutorial) objeto.draw(batch);
 
@@ -195,8 +225,10 @@ public class puzzle1 implements Screen {
         }
         // HUD do jogo
         else {
-            fonte.setColor(Color.YELLOW);
-            fonte.draw(batch, "Acertos: " + itensCertos + " / 3", 50f, alturaJanela - 50f);
+            if (!puzzleFinalizado) {
+                fonte.setColor(Color.YELLOW);
+                fonte.draw(batch, "Acertos: " + itensCertos + " / 3", 50f, alturaJanela - 50f);
+            }
 
             //quando o jogo finalizar
             if (puzzleFinalizado) {
@@ -204,10 +236,11 @@ public class puzzle1 implements Screen {
                 fonte.draw(batch, "MISSAO CUMPRIDA!", larguraJanela / 2f - 170f, alturaJanela - 100f);
                 fonte.getData().setScale(2f);
                 fonte.draw(batch, "Pegue o ferro para o trabalhador!", larguraJanela / 2f - 180f, alturaJanela - 200f);
-                fonte.getData().setScale(1.5f);
-                fonte.draw(batch, "Pressione ESPACO para sair", larguraJanela / 2f - 130f, alturaJanela - 270f);
-                fonte.getData().setScale(3f);
-                batch.draw(BarraFerroImg, 850f, 50f, 100f, 64f);
+
+                fonte.getData().setScale(4f);
+
+                // DESENHA A BARRA CAINDO
+                batch.draw(BarraFerroImg, barraX, barraY, 100f, 64f);
             }
         }
 
@@ -231,8 +264,11 @@ public class puzzle1 implements Screen {
         RoboParadoImg.dispose();
         RoboDirImg.dispose();
         RoboEsqImg.dispose();
+
+        // AQUI SIM FICA O DISPOSE DAS CAIXAS!
         caixaVerde.dispose();
         caixaVermelha.dispose();
+
         if (objeto != null) objeto.dispose(); //pedro lucas antonio
     }
 

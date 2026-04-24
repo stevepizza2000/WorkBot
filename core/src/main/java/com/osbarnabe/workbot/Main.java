@@ -5,6 +5,11 @@ import com.badlogic.gdx.assets.AssetManager;
 
 public class Main extends Game {
 
+    public boolean npc1Completo = false;
+    public boolean puzzle1Completo = false;
+    public boolean npc1PosPuzzleFalou = false;
+    public boolean npc3Liberado = false;
+
     // Gerenciador de assets compartilhado por todo o jogo
     public AssetManager assets;
 
