@@ -96,12 +96,11 @@ public class GameScreen implements Screen {
     private Texture balaoNPC3;
     private Animation<TextureRegion> animacaoBalaoNPC3;
 
-    private boolean npc3JaFalou = false;
-
-    private boolean bloqueioNPC3 = true;
-
     private Texture botaoIntImg;
     private Animation<TextureRegion> animacaoBotao;
+
+    private Texture balaoNPC1_2;
+    private Animation<TextureRegion> animacaoBalao2;
 
     public GameScreen(Main jogo) {
         this(jogo, 100f, 65f);
@@ -143,6 +142,8 @@ public class GameScreen implements Screen {
         portinha2Img   = jogo.assets.get("portinha2.png", Texture.class);
         balaoNPC1 = jogo.assets.get("BalaoFala_NPC1.png", Texture.class);
         balaoNPC3 = jogo.assets.get("BalaoFala_NPC3.png", Texture.class);
+        balaoNPC1_2 = jogo.assets.get("BalaoFala_NPC1_2.png", Texture.class);
+
         animacaoBalao = new Animation<>(0.4f,
             extrairFrames(balaoNPC1,
                 balaoNPC1.getWidth(),
@@ -173,6 +174,14 @@ public class GameScreen implements Screen {
                 balaoNPC3,
                 balaoNPC3.getWidth(),       // largura inteira
                 balaoNPC3.getHeight() / 2,  // dividido verticalmente
+                2
+            )
+        );
+        animacaoBalao2 = new Animation<>(0.4f,
+            extrairFrames(
+                balaoNPC1_2,
+                balaoNPC1_2.getWidth(),
+                balaoNPC1_2.getHeight() / 2,
                 2
             )
         );
@@ -219,12 +228,37 @@ public class GameScreen implements Screen {
             if (podeInteragir) {
 
                 if (dialogoAtivo) {
+
                     dialogoAtivo = false;
-                    bloqueioNPC = false;
+
+                    // PRIMEIRA VEZ
+                    if (!jogo.npc1Completo) {
+                        jogo.npc1Completo = true;
+                        bloqueioNPC = false;
+                    }
+
+                    // SEGUNDA VEZ (pós puzzle)
+                    else if (jogo.puzzle1Completo) {
+                        jogo.npc1PosPuzzleFalou = true;
+
+                        // 👇 OPCIONAL: permitir rejogar o puzzle
+                        jogo.puzzle1Completo = false;
+                    }
                 }
+
                 else if (pertoDoNPC(npc1X)) {
-                    dialogoAtivo = true;
-                    tempoAFK = tempoMaxAFK;
+
+                    // 🟡 PRIMEIRA INTERAÇÃO
+                    if (!jogo.npc1Completo) {
+                        dialogoAtivo = true;
+                        tempoAFK = tempoMaxAFK;
+                    }
+
+                    // 🔵 SEGUNDA INTERAÇÃO (depois do puzzle)
+                    else if (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou) {
+                        dialogoAtivo = true;
+                        tempoAFK = tempoMaxAFK;
+                    }
                 }
 
                 else if (pertoDoNPC(npc3X)) {
@@ -236,11 +270,8 @@ public class GameScreen implements Screen {
                         // ABRE
                         dialogoNPC3 = true;
                     }
-                    npc3JaFalou = true;
-                    bloqueioNPC3 = false;
+                    jogo.npc3Liberado = true;
                 }
-
-
                 else if (colideComPorta(porta1)) {
                     porta1.interagir();
                 }
@@ -249,6 +280,7 @@ public class GameScreen implements Screen {
                 }
 
                 podeInteragir = false;
+
             }
         } else {
             podeInteragir = true;
@@ -291,6 +323,8 @@ public class GameScreen implements Screen {
         // Limite direito
         if (roboX > 6050f) roboX = 6050f;
 
+        bloqueioNPC = !jogo.npc1Completo;
+
         //barreira NPCs
         if (bloqueioNPC) {
             float limite = 2300f; // posição da porta 1 (ajusta se precisar)
@@ -300,7 +334,17 @@ public class GameScreen implements Screen {
             }
         }
 
-        if (bloqueioNPC3) {
+        // 🚧 NOVA BARREIRA (PUZZLE 1)
+        if (!jogo.npc1PosPuzzleFalou) {
+
+            float limitePuzzle = 3000f;
+
+            if (roboX + tamanhoRobo > limitePuzzle) {
+                roboX = limitePuzzle - tamanhoRobo;
+            }
+        }
+
+        if (!jogo.npc3Liberado) {
             float limiteNPC3 = 4300f; // posição da porta (ajusta se precisar)
 
             if (roboX + tamanhoRobo > limiteNPC3) {
@@ -347,7 +391,6 @@ public class GameScreen implements Screen {
         // BOTOES E PONTO DE EXCLAMAÇÃO
         if (pertoDoNPC(npc1X)) {
 
-            // 🔘 Botão (AGORA também aparece durante diálogo)
             TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
 
             float escala = 0.45f;
@@ -359,9 +402,12 @@ public class GameScreen implements Screen {
 
             batch.draw(frameBotao, x, y, largura, altura);
 
-        } else if (bloqueioNPC) {
+        }
+        else if (
+            !jogo.npc1Completo || // antes de falar
+                (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou) // depois do puzzle
+        ) {
 
-            // ❗ Só aparece antes de falar com NPC
             batch.draw(animacaoPonto.getKeyFrame(elapsedTime, true),
                 1904, 437, 100, 100);
         }
@@ -369,7 +415,18 @@ public class GameScreen implements Screen {
 
         // BALÃO DE FALA
         if (dialogoAtivo) {
-            TextureRegion frameBalao = animacaoBalao.getKeyFrame(elapsedTime, true);
+
+            TextureRegion frame;
+
+            // PRIMEIRO DIÁLOGO
+            if (!jogo.npc1Completo) {
+                frame = animacaoBalao.getKeyFrame(elapsedTime, true);
+            }
+
+            // SEGUNDO DIÁLOGO
+            else {
+                frame = animacaoBalao2.getKeyFrame(elapsedTime, true);
+            }
 
             float larguraBalao = 800f;
             float alturaBalao  = 400f;
@@ -377,7 +434,7 @@ public class GameScreen implements Screen {
             float x = camera.position.x - larguraBalao / 2f;
             float y = camera.position.y + (alturaJanela / 2f) - alturaBalao - 50f;
 
-            batch.draw(frameBalao, x, y, larguraBalao, alturaBalao);
+            batch.draw(frame, x, y, larguraBalao, alturaBalao);
         }
 
         if (dialogoNPC3) {
@@ -407,7 +464,7 @@ public class GameScreen implements Screen {
 
             batch.draw(frameBotao, x, y, largura, altura);
 
-        } else if (!npc3JaFalou) {
+        } else if (!jogo.npc3Liberado) {
 
             // ❗ SÓ aparece se NUNCA falou com o NPC
             batch.draw(animacaoPonto2.getKeyFrame(elapsedTime, true),

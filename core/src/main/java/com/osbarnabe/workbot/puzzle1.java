@@ -158,6 +158,8 @@ public class puzzle1 implements Screen {
 
                 // Se tocou, volta pro GameScreen na posição da Porta 1 (X=2650f, Y=50f)
                 if (colidiuX && colidiuY) {
+                    jogo.npc1Completo = true; // 🔥 ESSENCIAL
+                    jogo.puzzle1Completo = true;
                     jogo.setScreen(new GameScreen(jogo, 2650f, 65f));
                 }
             }
@@ -235,7 +237,7 @@ public class puzzle1 implements Screen {
                 fonte.getData().setScale(2f);
                 fonte.draw(batch, "Pegue o ferro para o trabalhador!", larguraJanela / 2f - 180f, alturaJanela - 200f);
 
-                fonte.getData().setScale(3f);
+                fonte.getData().setScale(4f);
 
                 // DESENHA A BARRA CAINDO
                 batch.draw(BarraFerroImg, barraX, barraY, 100f, 64f);
