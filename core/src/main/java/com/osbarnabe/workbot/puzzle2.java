@@ -53,6 +53,8 @@ public class puzzle2 implements Screen {
 
     private int score = 0;
 
+
+
     public puzzle2(Main jogo) {
         this.jogo = jogo;
 
@@ -68,7 +70,9 @@ public class puzzle2 implements Screen {
         texBackground = new Texture("fundo_puzzle2.png");
 
         canos = new Array<>();
+
     }
+
 
     private void resetGame() {
         birdY      = 200f;
@@ -79,6 +83,12 @@ public class puzzle2 implements Screen {
     }
 
     private void update(float delta) {
+
+        if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
+            jogo.puzzle2Completo = true; // 🔥 SALVA PROGRESSO
+            jogo.setScreen(new GameScreen(jogo, 4600f, 50f));
+        }
+
         // Física do pássaro
         velY  += GRAVIDADE * delta;
         birdY += velY * delta;
@@ -134,9 +144,13 @@ public class puzzle2 implements Screen {
 
         // Condição de vitória → volta ao GameScreen próximo à Porta 2
         if (score >= 10) {
+            jogo.puzzle2Completo = true; // 🔥 SALVA PROGRESSO
             jogo.setScreen(new GameScreen(jogo, 4600f, 50f));
         }
     }
+
+
+
 
     @Override
     public void render(float delta) {

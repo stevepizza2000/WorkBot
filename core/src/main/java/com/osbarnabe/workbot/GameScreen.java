@@ -352,6 +352,15 @@ public class GameScreen implements Screen {
             }
         }
 
+        // 🚧 BARREIRA APÓS PORTA 2 (PUZZLE 2)
+        if (!jogo.puzzle2Completo) {
+            float limiteDepoisPorta2 = 5000f; // ajusta se precisar
+
+            if (roboX + tamanhoRobo > limiteDepoisPorta2) {
+                roboX = limiteDepoisPorta2 - tamanhoRobo;
+            }
+        }
+
         // Câmera segue o robô
         camera.position.x = roboX + (tamanhoRobo / 2f);
         if (camera.position.x < viewport.getWorldWidth() / 2f)
