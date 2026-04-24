@@ -9,6 +9,7 @@ public class Main extends Game {
     public boolean puzzle1Completo = false;
     public boolean npc1PosPuzzleFalou = false;
     public boolean npc3Liberado = false;
+    public boolean puzzle2Completo = false;
 
     // Gerenciador de assets compartilhado por todo o jogo
     public AssetManager assets;

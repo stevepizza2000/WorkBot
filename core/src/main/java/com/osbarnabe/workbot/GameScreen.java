@@ -38,7 +38,7 @@ public class GameScreen implements Screen {
     private float elapsedTime = 0f;
 
     // Cronômetro AFK
-    private float tempoAFK = 10f;
+    private float tempoAFK = 15f;
     private final float tempoMaxAFK = 20f;
     private final float limiteAFK = 0f;
     private BitmapFont fonte;
@@ -46,7 +46,7 @@ public class GameScreen implements Screen {
     // Texturas do cenário
     private Texture RoboParadoImg, RoboDirImg, RoboEsqImg;
     private Texture fabrica1Img, fabrica2Img, fabrica3Img;
-    private Texture ceitImg, ceu1Img, ceu2Img, localFinalImg, portinha2Img, finalImg;
+    private Texture ceitImg, ceu1Img, ceu2Img, localFinalImg, portinha2Img;
     private Texture trabalhadorImg, trabalhador2Img, trabalhador3Img;
     private Texture inicioImg, portinhaImg;
     private Texture localportaImg, localporta2Img, localporta3Img;
@@ -143,7 +143,6 @@ public class GameScreen implements Screen {
         balaoNPC1 = jogo.assets.get("BalaoFala_NPC1.png", Texture.class);
         balaoNPC3 = jogo.assets.get("BalaoFala_NPC3.png", Texture.class);
         balaoNPC1_2 = jogo.assets.get("BalaoFala_NPC1_2.png", Texture.class);
-        finalImg = jogo.assets.get("final.png", Texture.class);
 
         animacaoBalao = new Animation<>(0.4f,
             extrairFrames(balaoNPC1,
@@ -384,8 +383,6 @@ public class GameScreen implements Screen {
         batch.draw(ceu2Img,        4900, alturaJanela-259, 700, 259);
         batch.draw(ceitImg,        5600, 0, 700, alturaJanela-259);
         batch.draw(ceu1Img,        5600, alturaJanela-259,700, 259);
-        batch.draw(finalImg,       6300, 0, 900, alturaJanela-259);
-        batch.draw(ceu2Img,       6300,  alturaJanela-259, 900, 259);
 
         // Trabalhadores animados
         batch.draw(animacaoTrabalhador2.getKeyFrame(elapsedTime, true), 2970, 210, 260, 260);
