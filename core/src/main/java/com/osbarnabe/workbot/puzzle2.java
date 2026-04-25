@@ -225,7 +225,7 @@ public class puzzle2 implements Screen {
             transicaoAlpha += delta * 1.5f;
             if (transicaoAlpha >= 1f) {
                 transicaoAlpha = 1f;
-                jogo.setScreen(new GameScreen(jogo, 4600f, 50f));
+                jogo.setScreen(new GameScreen(jogo, 4465f, 65f));
             }
         }
     }
