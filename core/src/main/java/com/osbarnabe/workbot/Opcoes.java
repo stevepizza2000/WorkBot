@@ -1,4 +1,5 @@
 package com.osbarnabe.workbot;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -28,6 +29,13 @@ public class Opcoes implements Screen {
     float larguraJanela = Gdx.graphics.getWidth();
     float alturaJanela  = Gdx.graphics.getHeight();
 
+    // Textos do aviso AFK traduzidos (sem acento para evitar erros na fonte padrão)
+    private String[] textosAFK = {
+        "As opcoes vao fechar em: ",     // 0 = PT
+        "Las opciones se cerraran en: ", // 1 = ES
+        "The options will close in: "    // 2 = EN
+    };
+
     public Opcoes(Main jogo) {
         this.jogo = jogo;
         batch = new SpriteBatch();
@@ -35,19 +43,13 @@ public class Opcoes implements Screen {
         font = new BitmapFont();
         font.getData().setScale(4f);
 
-        btnVoltar         = new Texture("BotaoVoltar.png");
-        btnVoltarSelect   = new Texture("BotaoVoltarSelect.png");
-        btnPortugues      = new Texture("BotaoPortugues.png");
-        btnPortuguesSelect = new Texture("BotaoPortSelect.png");
-        btnIngles         = new Texture("BotaoIngles.png");
-        btnInglesSelect   = new Texture("BotaoInglesSelect.png");
-        btnEspanhol       = new Texture("BotaoEspanhol.png");
-        btnEspanholSelect = new Texture("BotaoEspanholSelect.png");
+        // Ao invés de carregar fixo aqui, chama o método que verifica o idioma atual do jogo!
+        atualizarTexturasIdioma();
     }
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0f, 0f, 0f, 1f);
+        ScreenUtils.clear(0f, 0f, 0f, 1f); // Dica: Pode colocar o azul Tramontina aqui! (0.0f, 0.12f, 0.37f, 1f)
 
         boolean esq = Gdx.input.isKeyPressed(Input.Keys.LEFT);
         boolean dir = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
@@ -58,10 +60,10 @@ public class Opcoes implements Screen {
             if (esq && dir) {
                 if (!processouBotao) {
                     switch (opcaoSelecionada) {
-                        case 0: /* Português – futuro: aplicar idioma */ break;
-                        case 1: /* Espanhol  – futuro: aplicar idioma */ break;
-                        case 2: /* Inglês    – futuro: aplicar idioma */ break;
-                        case 3: jogo.setScreen(new MenuScreen(jogo)); break;
+                        case 0: jogo.idioma = 0; atualizarTexturasIdioma(); break; // Português
+                        case 1: jogo.idioma = 1; atualizarTexturasIdioma(); break; // Espanhol
+                        case 2: jogo.idioma = 2; atualizarTexturasIdioma(); break; // Inglês
+                        case 3: jogo.setScreen(new MenuScreen(jogo)); break;       // Voltar
                     }
                     processouBotao = true;
                 }
@@ -94,15 +96,62 @@ public class Opcoes implements Screen {
 
         batch.draw(opcaoSelecionada == 0 ? btnPortuguesSelect : btnPortugues, larguraJanela/2 - 180, alturaJanela/2 + 250, 400, 200);
         batch.draw(opcaoSelecionada == 1 ? btnEspanholSelect  : btnEspanhol,  larguraJanela/2 - 180, alturaJanela/2, 400, 200);
-        batch.draw(opcaoSelecionada == 2 ? btnInglesSelect    : btnIngles,    larguraJanela/2 - 180, alturaJanela/2 -250, 400, 200);
+        batch.draw(opcaoSelecionada == 2 ? btnInglesSelect    : btnIngles,    larguraJanela/2 - 180, alturaJanela/2 - 250, 400, 200);
         batch.draw(opcaoSelecionada == 3 ? btnVoltarSelect    : btnVoltar,    larguraJanela/2 - 180, alturaJanela/2 - 500, 400, 200);
 
+        // Desenha o aviso AFK na língua correta
         if (tempoAFK <= 5f && tempoAFK > 0f) {
             int seg = (int) Math.ceil(tempoAFK);
-            font.draw(batch, "As opções vão fechar em: " + seg, larguraJanela/2 - 300, alturaJanela - 80);
+            font.draw(batch, textosAFK[jogo.idioma] + seg, larguraJanela/2 - 300, alturaJanela - 80);
         }
 
         batch.end();
+    }
+
+    // --- NOVO MÉTODO: ATUALIZA AS TEXTURAS CONFORME O IDIOMA ---
+    private void atualizarTexturasIdioma() {
+        // 1. Limpa as texturas antigas da memória para não travar o PC do Senai/Tramontina
+        if (btnVoltar != null) {
+            btnVoltar.dispose(); btnVoltarSelect.dispose();
+            btnPortugues.dispose(); btnPortuguesSelect.dispose();
+            btnIngles.dispose(); btnInglesSelect.dispose();
+            btnEspanhol.dispose(); btnEspanholSelect.dispose();
+        }
+
+        // 2. Carrega as novas imagens baseadas na variável global
+        if (jogo.idioma == 0) {
+            // PORTUGUÊS
+            btnVoltar         = new Texture("BotaoVoltar.png");
+            btnVoltarSelect   = new Texture("BotaoVoltarSelect.png");
+            btnPortugues      = new Texture("BotaoPortugues.png");
+            btnPortuguesSelect= new Texture("BotaoPortSelect.png");
+            btnIngles         = new Texture("BotaoIngles.png");
+            btnInglesSelect   = new Texture("BotaoInglesSelect.png");
+            btnEspanhol       = new Texture("BotaoEspanhol.png");
+            btnEspanholSelect = new Texture("BotaoEspanholSelect.png");
+
+        } else if (jogo.idioma == 1) {
+            // ESPANHOL (Adicione sufixo _ES nas suas imagens na pasta assets)
+            btnVoltar         = new Texture("BotaoVoltar_ES.png");
+            btnVoltarSelect   = new Texture("BotaoVoltarSelect_ES.png");
+            btnPortugues      = new Texture("BotaoPortugues_ES.png");
+            btnPortuguesSelect= new Texture("BotaoPortSelect_ES.png");
+            btnIngles         = new Texture("BotaoIngles_ES.png");
+            btnInglesSelect   = new Texture("BotaoInglesSelect_ES.png");
+            btnEspanhol       = new Texture("BotaoEspanhol_ES.png");
+            btnEspanholSelect = new Texture("BotaoEspanholSelect_ES.png");
+
+        } else {
+            // INGLÊS (Adicione sufixo _EN nas suas imagens na pasta assets)
+            btnVoltar         = new Texture("BotaoVoltar_EN.png");
+            btnVoltarSelect   = new Texture("BotaoVoltarSelect_EN.png");
+            btnPortugues      = new Texture("BotaoPortugues_EN.png");
+            btnPortuguesSelect= new Texture("BotaoPortSelect_EN.png");
+            btnIngles         = new Texture("BotaoIngles_EN.png");
+            btnInglesSelect   = new Texture("BotaoInglesSelect_EN.png");
+            btnEspanhol       = new Texture("BotaoEspanhol_EN.png");
+            btnEspanholSelect = new Texture("BotaoEspanholSelect_EN.png");
+        }
     }
 
     @Override public void show() {}
@@ -115,9 +164,12 @@ public class Opcoes implements Screen {
     public void dispose() {
         batch.dispose();
         font.dispose();
-        btnVoltar.dispose();         btnVoltarSelect.dispose();
-        btnPortugues.dispose();      btnPortuguesSelect.dispose();
-        btnIngles.dispose();         btnInglesSelect.dispose();
-        btnEspanhol.dispose();       btnEspanholSelect.dispose();
+        // Evita erro se a tela for fechada antes das texturas carregarem
+        if (btnVoltar != null) {
+            btnVoltar.dispose();         btnVoltarSelect.dispose();
+            btnPortugues.dispose();      btnPortuguesSelect.dispose();
+            btnIngles.dispose();         btnInglesSelect.dispose();
+            btnEspanhol.dispose();       btnEspanholSelect.dispose();
+        }
     }
 }

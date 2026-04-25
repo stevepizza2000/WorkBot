@@ -10,6 +10,9 @@ public class Main extends Game {
     public boolean npc1PosPuzzleFalou = false;
     public boolean npc3Liberado = false;
 
+    // 0 = Português, 1 = Espanhol, 2 = Inglês
+    public int idioma = 0;
+
     // Gerenciador de assets compartilhado por todo o jogo
     public AssetManager assets;
 

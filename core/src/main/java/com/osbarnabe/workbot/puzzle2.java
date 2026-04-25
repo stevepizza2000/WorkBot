@@ -121,6 +121,10 @@ public class puzzle2 implements Screen {
         velY += GRAVIDADE * delta;
         birdY += velY * delta;
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)){
+            jogo.setScreen(new GameScreen(jogo, 4465f, 65f));
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             velY = PULO;
         }

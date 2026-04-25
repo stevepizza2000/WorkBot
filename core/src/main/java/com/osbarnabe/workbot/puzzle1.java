@@ -160,7 +160,7 @@ public class puzzle1 implements Screen {
                 if (colidiuX && colidiuY) {
                     jogo.npc1Completo = true; // 🔥 ESSENCIAL
                     jogo.puzzle1Completo = true;
-                    jogo.setScreen(new GameScreen(jogo, 2650f, 65f));
+                    jogo.setScreen(new GameScreen(jogo, 2460f, 65f));
                 }
             }
 

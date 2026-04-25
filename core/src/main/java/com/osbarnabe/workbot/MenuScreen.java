@@ -1,4 +1,5 @@
 package com.osbarnabe.workbot;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -34,6 +35,13 @@ public class MenuScreen implements Screen {
     private float tempoPressionado = 0;
     private boolean processouBotao = false;
 
+    // --- ARRAY COM OS TEXTOS AFK TRADUZIDOS ---
+    private String[] textosAFK = {
+        "O jogo vai fechar em: ",    // 0 = PT
+        "El juego se cerrara en: ",  // 1 = ES
+        "The game will close in: "   // 2 = EN
+    };
+
     public MenuScreen(Main jogo) {
         this.jogo = jogo;
         batch = new SpriteBatch();
@@ -45,13 +53,11 @@ public class MenuScreen implements Screen {
         fontAFK.getData().setScale(2f);
         fontAFK.setColor(Color.RED);
 
-        btnInicio       = new Texture("BotaoInicio.png");
-        btnInicioSelect = new Texture("BotaoInicioSelect.png");
-        btnCreditos       = new Texture("BotaoCreditos.png");
-        btnCreditosSelect = new Texture("BotaoCreditosSelect.png");
-        btnOpcao       = new Texture("BotaoOpcao.png");
-        btnOpcaoSelect = new Texture("BotaoOpcaoSelect.png");
+        // O fundo não muda de idioma, então podemos carregar normalmente
         fundo = new Texture("fundo.png");
+
+        // Carrega os botões no idioma que está salvo no Main.java
+        atualizarTexturasIdioma();
     }
 
     @Override
@@ -108,12 +114,47 @@ public class MenuScreen implements Screen {
         // Botão Opções
         batch.draw(opcaoSelecionada == 2 ? btnOpcaoSelect : btnOpcao, larguraJanela/2 - 180, 100, 400, 200);
 
-        // Aviso AFK
+        // Aviso AFK dinâmico pelo idioma
         if (tempoAFK <= 5f && tempoAFK > 0f) {
             int seg = (int) Math.ceil(tempoAFK);
-            fontAviso.draw(batch, "O jogo vai fechar em: " + seg, larguraJanela/2 - 300, alturaJanela - 80);
+            fontAviso.draw(batch, textosAFK[jogo.idioma] + seg, larguraJanela/2 - 300, alturaJanela - 80);
         }
         batch.end();
+    }
+
+    // --- MÉTODO PARA CARREGAR AS IMAGENS CORRETAS ---
+    private void atualizarTexturasIdioma() {
+        // Limpa as da memória caso já existam
+        if (btnInicio != null) {
+            btnInicio.dispose(); btnInicioSelect.dispose();
+            btnCreditos.dispose(); btnCreditosSelect.dispose();
+            btnOpcao.dispose(); btnOpcaoSelect.dispose();
+        }
+
+        if (jogo.idioma == 0) { // PORTUGUÊS
+            btnInicio       = new Texture("BotaoInicio.png");
+            btnInicioSelect = new Texture("BotaoInicioSelect.png");
+            btnCreditos     = new Texture("BotaoCreditos.png");
+            btnCreditosSelect = new Texture("BotaoCreditosSelect.png");
+            btnOpcao        = new Texture("BotaoOpcao.png");
+            btnOpcaoSelect  = new Texture("BotaoOpcaoSelect.png");
+
+        } else if (jogo.idioma == 1) { // ESPANHOL
+            btnInicio       = new Texture("BotaoInicio_ES.png");
+            btnInicioSelect = new Texture("BotaoInicioSelect_ES.png");
+            btnCreditos     = new Texture("BotaoCreditos_ES.png");
+            btnCreditosSelect = new Texture("BotaoCreditosSelect_ES.png");
+            btnOpcao        = new Texture("BotaoOpcao_ES.png");
+            btnOpcaoSelect  = new Texture("BotaoOpcaoSelect_ES.png");
+
+        } else { // INGLÊS
+            btnInicio       = new Texture("BotaoInicio_EN.png");
+            btnInicioSelect = new Texture("BotaoInicioSelect_EN.png");
+            btnCreditos     = new Texture("BotaoCreditos_EN.png");
+            btnCreditosSelect = new Texture("BotaoCreditosSelect_EN.png");
+            btnOpcao        = new Texture("BotaoOpcao_EN.png");
+            btnOpcaoSelect  = new Texture("BotaoOpcaoSelect_EN.png");
+        }
     }
 
     @Override public void show() {}
@@ -127,12 +168,14 @@ public class MenuScreen implements Screen {
         batch.dispose();
         fontAviso.dispose();
         fontAFK.dispose();
-        btnInicio.dispose();
-        btnInicioSelect.dispose();
-        btnCreditos.dispose();
-        btnCreditosSelect.dispose();
-        btnOpcao.dispose();
-        btnOpcaoSelect.dispose();
         fundo.dispose();
+        if (btnInicio != null) {
+            btnInicio.dispose();
+            btnInicioSelect.dispose();
+            btnCreditos.dispose();
+            btnCreditosSelect.dispose();
+            btnOpcao.dispose();
+            btnOpcaoSelect.dispose();
+        }
     }
 }

@@ -17,6 +17,13 @@ public class LoadingScreen implements Screen {
     private OrthographicCamera camera;
     private Viewport viewport;
 
+    // --- ARRAY COM OS TEXTOS DE LOADING TRADUZIDOS ---
+    private String[] textosLoading = {
+        "Carregando... ", // 0 = PT
+        "Cargando... ",   // 1 = ES
+        "Loading... "     // 2 = EN
+    };
+
     public LoadingScreen(Main jogo) {
         this.jogo = jogo;
         batch = new SpriteBatch();
@@ -25,6 +32,11 @@ public class LoadingScreen implements Screen {
 
         camera = new OrthographicCamera();
         viewport = new FitViewport(1080f, 1920f, camera);
+
+        // --- DEFININDO O SUFIXO DE IDIOMA ---
+        String sufixo = "";
+        if (jogo.idioma == 1) sufixo = "_ES";
+        else if (jogo.idioma == 2) sufixo = "_EN";
 
         // Pré-carregamento de todos os assets do GameScreen
         jogo.assets.load("roboParado.png",   Texture.class);
@@ -49,15 +61,18 @@ public class LoadingScreen implements Screen {
         jogo.assets.load("trabalhador1flnd.png", Texture.class);
         jogo.assets.load("localFinal.png", Texture.class);
         jogo.assets.load("portinha2.png", Texture.class);
-        jogo.assets.load("BalaoFala_NPC1.png", Texture.class);
-        jogo.assets.load("BalaoFala_NPC3.png", Texture.class);
         jogo.assets.load("botaoInt.png", Texture.class);
-        jogo.assets.load("BalaoFala_NPC1_2.png", Texture.class);
         jogo.assets.load("final.png", Texture.class);
+
+        // --- CARREGANDO OS BALÕES DE ACORDO COM O IDIOMA ---
+        jogo.assets.load("BalaoFala_NPC1" + sufixo + ".png", Texture.class);
+        jogo.assets.load("BalaoFala_NPC3" + sufixo + ".png", Texture.class);
+        jogo.assets.load("BalaoFala_NPC1_2" + sufixo + ".png", Texture.class);
     }
 
     @Override
     public void render(float delta) {
+        // Fundo azul Tramontina ou preto (se quiser pode usar 0.0f, 0.12f, 0.37f, 1f)
         ScreenUtils.clear(0f, 0f, 0f, 1f);
 
         if (jogo.assets.update()) {
@@ -71,7 +86,8 @@ public class LoadingScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-        fonte.draw(batch, "Carregando... " + porcentagem + "%", 365f, 960f);
+        // Desenha o texto de acordo com o idioma salvo em jogo.idioma
+        fonte.draw(batch, textosLoading[jogo.idioma] + porcentagem + "%", 365f, 960f);
         batch.end();
     }
 
