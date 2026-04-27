@@ -46,7 +46,7 @@ public class GameScreen implements Screen {
     // Texturas do cenário
     private Texture RoboParadoImg, RoboDirImg, RoboEsqImg;
     private Texture fabrica1Img, fabrica2Img, fabrica3Img;
-    private Texture ceitImg, ceu1Img, ceu2Img, localFinalImg, portinha2Img, finalImg;
+    private Texture ceitImg, ceu1Img, ceu2Img, localFinalImg, portinha2Img;
     private Texture trabalhadorImg, trabalhador2Img, trabalhador3Img;
     private Texture inicioImg, portinhaImg;
     private Texture localportaImg, localporta2Img, localporta3Img;
@@ -143,7 +143,6 @@ public class GameScreen implements Screen {
         balaoNPC1 = jogo.assets.get("BalaoFala_NPC1.png", Texture.class);
         balaoNPC3 = jogo.assets.get("BalaoFala_NPC3.png", Texture.class);
         balaoNPC1_2 = jogo.assets.get("BalaoFala_NPC1_2.png", Texture.class);
-        finalImg = jogo.assets.get("final.png", Texture.class);
 
         animacaoBalao = new Animation<>(0.4f,
             extrairFrames(balaoNPC1,
@@ -202,6 +201,7 @@ public class GameScreen implements Screen {
 
         return Math.abs(centroRobo - centroNPC) < raioInteracao;
     }
+
 
     @Override
     public void render(float delta) {
@@ -318,6 +318,7 @@ public class GameScreen implements Screen {
             if (tempoAFK <= limiteAFK) jogo.setScreen(new MenuScreen(jogo));
         }
 
+
         // Limite esquerdo
         if (roboX < 0f) roboX = 0f;
 
@@ -353,6 +354,15 @@ public class GameScreen implements Screen {
             }
         }
 
+        // 🚧 BARREIRA APÓS PORTA 2 (PUZZLE 2)
+        if (!jogo.puzzle2Completo) {
+            float limiteDepoisPorta2 = 5000f; // ajusta se precisar
+
+            if (roboX + tamanhoRobo > limiteDepoisPorta2) {
+                roboX = limiteDepoisPorta2 - tamanhoRobo;
+            }
+        }
+
         // Câmera segue o robô
         camera.position.x = roboX + (tamanhoRobo / 2f);
         if (camera.position.x < viewport.getWorldWidth() / 2f)
@@ -384,11 +394,9 @@ public class GameScreen implements Screen {
         batch.draw(ceu2Img,        4900, alturaJanela-259, 700, 259);
         batch.draw(ceitImg,        5600, 0, 700, alturaJanela-259);
         batch.draw(ceu1Img,        5600, alturaJanela-259,700, 259);
-        batch.draw(finalImg,       6300, 0, 900, alturaJanela-259);
-        batch.draw(ceu2Img,       6300,  alturaJanela-259, 900, 259);
 
         // Trabalhadores animados
-        batch.draw(animacaoTrabalhador2.getKeyFrame(elapsedTime, true), 2970, 210, 260, 260);
+        batch.draw(animacaoTrabalhador2.getKeyFrame(elapsedTime, true), 2970, 210, 260, 260); // <-- Moises da silva santos junior ndv??
         batch.draw(animacaoTrabalhador3.getKeyFrame(elapsedTime, true), 3770, 170, 380, 380);
 
         // BOTOES E PONTO DE EXCLAMAÇÃO
@@ -410,11 +418,40 @@ public class GameScreen implements Screen {
             !jogo.npc1Completo || // antes de falar
                 (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou) // depois do puzzle
         ) {
-
             batch.draw(animacaoPonto.getKeyFrame(elapsedTime, true),
                 1904, 437, 100, 100);
         }
         batch.draw(animacaoTrabalhador.getKeyFrame(elapsedTime, true),  1820, 210, 260, 260);
+
+        // BOTÃO PORTA 1
+        if (colideComPorta(porta1)) {
+
+            TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
+
+            float escala = 0.5f;
+            float largura = frameBotao.getRegionWidth() * escala;
+            float altura  = frameBotao.getRegionHeight() * escala;
+
+            float x = porta1.x + (porta1.largura / 2f) - (largura / 2f) - 45f;
+            float y = 520f;
+
+            batch.draw(frameBotao, x, y, largura, altura);
+        }
+
+        // BOTÃO PORTA 2
+        if (colideComPorta(porta2)) {
+
+            TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
+
+            float escala = 0.55f;
+            float largura = frameBotao.getRegionWidth() * escala;
+            float altura  = frameBotao.getRegionHeight() * escala;
+
+            float x = porta2.x + (porta2.largura / 2f) - (largura / 2f) - 45;
+            float y = 5200f;
+
+            batch.draw(frameBotao, x, y, largura, altura);
+        }
 
         // BALÃO DE FALA
         if (dialogoAtivo) {
