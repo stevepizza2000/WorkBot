@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.math.MathUtils;
 
 /**
  * Puzzle 1 – Sorting de itens.
@@ -112,7 +113,7 @@ public class puzzle1 implements Screen {
                 objeto.update(delta);
 
                 // Objeto chegou na caixa
-                if (objeto.y <= 100f) {
+                if (objeto.y <= 100f && objeto.y >= -50f) {
                     if (objeto.x > larguraJanela / 2f + 150f)      verificarAcerto(caixaVerde);
                     else if (objeto.x < larguraJanela / 2f - 100f) verificarAcerto(caixaVermelha);
 
@@ -248,7 +249,11 @@ public class puzzle1 implements Screen {
     }
 
     private void spawnObjeto() {
-        objeto = new ObjetoCaindo(larguraJanela / 2f, alturaJanela / 2f - 280f, Math.random() > 0.5);
+        objeto = new ObjetoCaindo(
+            larguraJanela / 2f,
+            alturaJanela / 2f - 280f,
+            MathUtils.randomBoolean()
+        );
     }
 
     private void verificarAcerto(Caixa caixa) {
