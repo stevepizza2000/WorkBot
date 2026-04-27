@@ -52,6 +52,7 @@ public class GameScreen implements Screen {
     private Texture localportaImg, localporta2Img, localporta3Img;
     private Texture portaImg;
     private Texture pontoImg;
+    private Texture fabrica3SpriteImg;
 
     // Posição do robô
     private float roboX;
@@ -102,6 +103,8 @@ public class GameScreen implements Screen {
     private Texture balaoNPC1_2;
     private Animation<TextureRegion> animacaoBalao2;
 
+    private Animation<TextureRegion> animacaoFabrica3;
+
     public GameScreen(Main jogo) {
         this(jogo, 100f, 65f);
     }
@@ -125,7 +128,7 @@ public class GameScreen implements Screen {
         ceitImg        = jogo.assets.get("ceit.png",         Texture.class);
         fabrica1Img    = jogo.assets.get("fabrica1.png",     Texture.class);
         fabrica2Img    = jogo.assets.get("fabrica2.png",     Texture.class);
-        fabrica3Img    = jogo.assets.get("fabrica3.png",     Texture.class);
+        fabrica3SpriteImg = jogo.assets.get("Fabrica3sprite.png", Texture.class);
         ceu1Img        = jogo.assets.get("ceu1.png",         Texture.class);
         ceu2Img        = jogo.assets.get("ceu2.png",         Texture.class);
         inicioImg      = jogo.assets.get("inicio.png",       Texture.class);
@@ -143,6 +146,15 @@ public class GameScreen implements Screen {
         balaoNPC1 = jogo.assets.get("BalaoFala_NPC1.png", Texture.class);
         balaoNPC3 = jogo.assets.get("BalaoFala_NPC3.png", Texture.class);
         balaoNPC1_2 = jogo.assets.get("BalaoFala_NPC1_2.png", Texture.class);
+
+        animacaoFabrica3 = new Animation<>(0.15f,
+            extrairFrames(
+                fabrica3SpriteImg, // ✅ agora sim correto
+                fabrica3SpriteImg.getWidth() / 5,
+                fabrica3SpriteImg.getHeight(),
+                5
+            )
+        );
 
         animacaoBalao = new Animation<>(0.4f,
             extrairFrames(balaoNPC1,
@@ -385,7 +397,12 @@ public class GameScreen implements Screen {
         batch.draw(ceu2Img,        2300, alturaJanela - 259, 700, 259);
         batch.draw(fabrica2Img,    2900, 0, 700, alturaJanela - 259);
         batch.draw(ceu1Img,        2900, alturaJanela - 259, 700, 259);
-        batch.draw(fabrica3Img,    3600, 0, 700, alturaJanela - 259);
+
+        TextureRegion frameFabrica = animacaoFabrica3.getKeyFrame(elapsedTime, true);
+
+        batch.draw(frameFabrica, 3600, 0, 700, alturaJanela - 259);
+
+
         batch.draw(ceu2Img,        3600, alturaJanela - 259, 700, 259);
         batch.draw(localporta3Img, 4300, 0, 700, alturaJanela - 259);
         batch.draw(portaImg,       4300, 0, 700, alturaJanela - 259); // Porta 2
