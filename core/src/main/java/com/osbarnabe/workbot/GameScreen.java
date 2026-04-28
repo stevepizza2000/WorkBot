@@ -103,7 +103,12 @@ public class GameScreen implements Screen {
     private Texture balaoNPC1_2;
     private Animation<TextureRegion> animacaoBalao2;
 
+
     private Animation<TextureRegion> animacaoFabrica3;
+
+    private Texture balaoNPC3_2;
+    private Animation<TextureRegion> animacaoBalaoNPC3_2;
+
 
     public GameScreen(Main jogo) {
         this(jogo, 100f, 65f);
@@ -146,6 +151,7 @@ public class GameScreen implements Screen {
         balaoNPC1 = jogo.assets.get("BalaoFala_NPC1.png", Texture.class);
         balaoNPC3 = jogo.assets.get("BalaoFala_NPC3.png", Texture.class);
         balaoNPC1_2 = jogo.assets.get("BalaoFala_NPC1_2.png", Texture.class);
+        balaoNPC3_2 = jogo.assets.get("BalaoFala_NPC3_2.png", Texture.class);
 
         animacaoFabrica3 = new Animation<>(0.15f,
             extrairFrames(
@@ -194,6 +200,14 @@ public class GameScreen implements Screen {
                 balaoNPC1_2,
                 balaoNPC1_2.getWidth(),
                 balaoNPC1_2.getHeight() / 2,
+                2
+            )
+        );
+        animacaoBalaoNPC3_2 = new Animation<>(0.4f,
+            extrairFrames(
+                balaoNPC3_2,
+                balaoNPC3_2.getWidth(),
+                balaoNPC3_2.getHeight() / 2,
                 2
             )
         );
@@ -277,19 +291,33 @@ public class GameScreen implements Screen {
                 else if (pertoDoNPC(npc3X)) {
 
                     if (dialogoNPC3) {
-                        // FECHA
                         dialogoNPC3 = false;
+
+                        // PRIMEIRA VEZ
+                        if (!jogo.npc3Falou) {
+                            jogo.npc3Falou = true;
+                        }
+
+                        // SEGUNDA VEZ (pós puzzle)
+                        else if (jogo.puzzle2Completo) {
+                            jogo.npc3PosPuzzleFalou = true;
+                            jogo.puzzle2Completo = false; // opcional (rejogar)
+                        }
+
                     } else {
-                        // ABRE
-                        dialogoNPC3 = true;
+
+                        // PRIMEIRA INTERAÇÃO
+                        if (!jogo.npc3Falou) {
+                            dialogoNPC3 = true;
+                        }
+
+                        // SEGUNDA INTERAÇÃO (depois do puzzle)
+                        else if (jogo.puzzle2Completo && !jogo.npc3PosPuzzleFalou) {
+                            dialogoNPC3 = true;
+                        }
                     }
+
                     jogo.npc3Liberado = true;
-                }
-                else if (colideComPorta(porta1)) {
-                    porta1.interagir();
-                }
-                else if (colideComPorta(porta2)) {
-                    porta2.interagir();
                 }
 
                 podeInteragir = false;
@@ -465,7 +493,7 @@ public class GameScreen implements Screen {
             float altura  = frameBotao.getRegionHeight() * escala;
 
             float x = porta2.x + (porta2.largura / 2f) - (largura / 2f) - 45;
-            float y = 5200f;
+            float y = 520f;
 
             batch.draw(frameBotao, x, y, largura, altura);
         }
@@ -495,7 +523,14 @@ public class GameScreen implements Screen {
         }
 
         if (dialogoNPC3) {
-            TextureRegion frame = animacaoBalaoNPC3.getKeyFrame(elapsedTime, true);
+
+            TextureRegion frame;
+
+            if (!jogo.npc3Falou) {
+                frame = animacaoBalaoNPC3.getKeyFrame(elapsedTime, true);
+            } else {
+                frame = animacaoBalaoNPC3_2.getKeyFrame(elapsedTime, true);
+            }
 
             float larguraBalao = 800f;
             float alturaBalao = 400f;
@@ -521,7 +556,7 @@ public class GameScreen implements Screen {
 
             batch.draw(frameBotao, x, y, largura, altura);
 
-        } else if (!jogo.npc3Liberado) {
+        } else if (!jogo.npc3Falou || (jogo.puzzle2Completo && !jogo.npc3PosPuzzleFalou)){
 
             // ❗ SÓ aparece se NUNCA falou com o NPC
             batch.draw(animacaoPonto2.getKeyFrame(elapsedTime, true),
