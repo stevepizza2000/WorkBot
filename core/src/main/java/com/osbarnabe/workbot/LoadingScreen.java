@@ -66,8 +66,8 @@ public class LoadingScreen implements Screen {
 
         // --- CARREGANDO OS BALÕES DE ACORDO COM O IDIOMA ---
         jogo.assets.load("BalaoFala_NPC1" + sufixo + ".png", Texture.class);
-        jogo.assets.load("BalaoFala_NPC3" + sufixo + ".png", Texture.class);
         jogo.assets.load("BalaoFala_NPC1_2" + sufixo + ".png", Texture.class);
+        jogo.assets.load("BalaoFala_NPC3" + sufixo + ".png", Texture.class);
     }
 
     @Override
