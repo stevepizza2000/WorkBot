@@ -100,10 +100,12 @@ public class puzzle2 implements Screen {
     }
 
     private void update(float delta) {
+        Boolean esq = Gdx.input.isKeyPressed(Input.Keys.LEFT);
+        Boolean dir = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         velY += GRAVIDADE * delta;
         birdY += velY * delta;
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        if (esq && dir) {
             velY = PULO;
         }
 
