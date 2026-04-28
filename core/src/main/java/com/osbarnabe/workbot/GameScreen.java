@@ -267,30 +267,18 @@ public class GameScreen implements Screen {
                     // SEGUNDA VEZ (pós puzzle)
                     else if (jogo.puzzle1Completo) {
                         jogo.npc1PosPuzzleFalou = true;
-
-                        // 👇 OPCIONAL: permitir rejogar o puzzle
-                        jogo.puzzle1Completo = false;
                     }
                 }
 
                 else if (pertoDoNPC(npc1X)) {
-
-                    // 🟡 PRIMEIRA INTERAÇÃO
-                    if (!jogo.npc1Completo) {
-                        dialogoAtivo = true;
-                        tempoAFK = tempoMaxAFK;
-                    }
-
-                    // 🔵 SEGUNDA INTERAÇÃO (depois do puzzle)
-                    else if (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou) {
-                        dialogoAtivo = true;
-                        tempoAFK = tempoMaxAFK;
-                    }
+                    dialogoAtivo = true;
+                    tempoAFK = tempoMaxAFK;
                 }
 
                 else if (pertoDoNPC(npc3X)) {
 
                     if (dialogoNPC3) {
+
                         dialogoNPC3 = false;
 
                         // PRIMEIRA VEZ
@@ -298,10 +286,11 @@ public class GameScreen implements Screen {
                             jogo.npc3Falou = true;
                         }
 
-                        // SEGUNDA VEZ (pós puzzle)
+                        // PÓS-PUZZLE (AGORA PODE REPETIR)
                         else if (jogo.puzzle2Completo) {
                             jogo.npc3PosPuzzleFalou = true;
-                            jogo.puzzle2Completo = false; // opcional (rejogar)
+                            // ❌ NÃO zera mais:
+                            // jogo.puzzle2Completo = false;
                         }
 
                     } else {
@@ -311,8 +300,8 @@ public class GameScreen implements Screen {
                             dialogoNPC3 = true;
                         }
 
-                        // SEGUNDA INTERAÇÃO (depois do puzzle)
-                        else if (jogo.puzzle2Completo && !jogo.npc3PosPuzzleFalou) {
+                        // DEPOIS DO PUZZLE → SEM LIMITE
+                        else if (jogo.puzzle2Completo) {
                             dialogoNPC3 = true;
                         }
                     }
@@ -395,7 +384,7 @@ public class GameScreen implements Screen {
         }
 
         // 🚧 BARREIRA APÓS PORTA 2 (PUZZLE 2)
-        if (!jogo.puzzle2Completo) {
+        if (!jogo.npc3PosPuzzleFalou) {
             float limiteDepoisPorta2 = 5000f; // ajusta se precisar
 
             if (roboX + tamanhoRobo > limiteDepoisPorta2) {
