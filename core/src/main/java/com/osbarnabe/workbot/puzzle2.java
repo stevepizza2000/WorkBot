@@ -124,7 +124,7 @@ public class puzzle2 implements Screen {
             c.x = WIDTH;
             c.gapY = MathUtils.random(120, 340);
 
-            if (canosGerados >= 10) {
+            if (canosGerados >= 5) {
                 c.temFaca = true;
             }
 
@@ -238,8 +238,8 @@ public class puzzle2 implements Screen {
             }
         }
 
-        if (canosGerados < 10) {
-            font.draw(batch, "Sobreviva aos canos: " + score + "/10", 10f, HEIGHT - 10f);
+        if (canosGerados < 5) {
+            font.draw(batch, "Sobreviva aos canos: " + score + "/5", 10f, HEIGHT - 10f);
         } else {
             font.draw(batch, "Pegue o kit de facas!", 10f, HEIGHT - 10f);
         }
