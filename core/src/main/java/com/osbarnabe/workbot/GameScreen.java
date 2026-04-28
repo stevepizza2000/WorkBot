@@ -76,7 +76,7 @@ public class GameScreen implements Screen {
     private boolean dialogoAtivo = false;
     private Texture balaoNPC1;
 
-    private float npc1X = 1850f; // mesma posição do trabalhador
+    private float npc1X = 2280f; // mesma posição do trabalhador
     private float npc1Y = 150f;
     private float raioInteracao = 150f;
 
@@ -281,7 +281,7 @@ public class GameScreen implements Screen {
 
         //barreira NPCs
         if (bloqueioNPC) {
-            float limite = 2300f;
+            float limite = 2700f;
             if (roboX + tamanhoRobo > limite) roboX = limite - tamanhoRobo;
         }
 
@@ -339,14 +339,14 @@ public class GameScreen implements Screen {
             float escala = 0.45f;
             float largura = frameBotao.getRegionWidth() * escala;
             float altura  = frameBotao.getRegionHeight() * escala;
-            float x = npc1X + (200f / 2f) - (largura / 2f);
+            float x = npc1X + (250f / 2f) - (largura / 2f);
             float y = npc1Y + 320f;
             batch.draw(frameBotao, x, y, largura, altura);
         }
         else if (!jogo.npc1Completo || (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou)) {
-            batch.draw(animacaoPonto.getKeyFrame(elapsedTime, true), 1904, 437, 100, 100);
+            batch.draw(animacaoPonto.getKeyFrame(elapsedTime, true), 2363, 437, 100, 100);
         }
-        batch.draw(animacaoTrabalhador.getKeyFrame(elapsedTime, true),  1820, 210, 260, 260);
+        batch.draw(animacaoTrabalhador.getKeyFrame(elapsedTime, true),  2280, 210, 260, 260);
 
         // BALÃO DE FALA
         if (dialogoAtivo) {
