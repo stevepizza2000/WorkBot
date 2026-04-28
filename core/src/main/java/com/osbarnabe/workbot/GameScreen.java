@@ -109,6 +109,9 @@ public class GameScreen implements Screen {
     private Texture balaoNPC3_2;
     private Animation<TextureRegion> animacaoBalaoNPC3_2;
 
+    ////DEBUG
+    private boolean debugSemBarreira = false;
+
 
     public GameScreen(Main jogo) {
         this(jogo, 100f, 65f);
@@ -232,6 +235,12 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0.8f, 0.85f, 0.9f, 1f);
+
+        /// //////DEBUG
+        if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+            debugSemBarreira = !debugSemBarreira;
+            System.out.println("DEBUG barreiras: " + debugSemBarreira);
+        }
 
         // Troca de tela ao fechar a porta
         if (!porta1.estaAberta) {
@@ -357,7 +366,7 @@ public class GameScreen implements Screen {
         bloqueioNPC = !jogo.npc1Completo;
 
         //barreira NPCs
-        if (bloqueioNPC) {
+        if (bloqueioNPC && !debugSemBarreira) {
             float limite = 2300f; // posição da porta 1 (ajusta se precisar)
 
             if (roboX + tamanhoRobo > limite) {
@@ -366,7 +375,7 @@ public class GameScreen implements Screen {
         }
 
         // 🚧 NOVA BARREIRA (PUZZLE 1)
-        if (!jogo.npc1PosPuzzleFalou) {
+        if (!jogo.npc1PosPuzzleFalou && !debugSemBarreira) {
 
             float limitePuzzle = 3000f;
 
@@ -375,7 +384,7 @@ public class GameScreen implements Screen {
             }
         }
 
-        if (!jogo.npc3Liberado) {
+        if (!jogo.npc3Liberado && !debugSemBarreira) {
             float limiteNPC3 = 4300f; // posição da porta (ajusta se precisar)
 
             if (roboX + tamanhoRobo > limiteNPC3) {
@@ -384,7 +393,7 @@ public class GameScreen implements Screen {
         }
 
         // 🚧 BARREIRA APÓS PORTA 2 (PUZZLE 2)
-        if (!jogo.npc3PosPuzzleFalou) {
+        if (!jogo.npc3PosPuzzleFalou && !debugSemBarreira) {
             float limiteDepoisPorta2 = 5000f; // ajusta se precisar
 
             if (roboX + tamanhoRobo > limiteDepoisPorta2) {
