@@ -222,6 +222,8 @@ public class puzzle2 implements Screen {
             if (transicaoAlpha >= 1f) {
                 transicaoAlpha = 1f;
                 jogo.setScreen(new GameScreen(jogo, 4600f, 50f));
+                jogo.puzzle2Completo = true;
+                jogo.npc3PosPuzzleFalou = false;
             }
         }
     }
