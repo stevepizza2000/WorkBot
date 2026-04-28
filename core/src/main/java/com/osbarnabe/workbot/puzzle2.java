@@ -239,7 +239,7 @@ public class puzzle2 implements Screen {
         }
 
         if (canosGerados < 5) {
-            font.draw(batch, "Sobreviva aos canos: " + score + "/5", 10f, HEIGHT - 10f);
+            font.draw(batch, "Passe pelos canos: " + score + "/5", 10f, HEIGHT - 10f);
         } else {
             font.draw(batch, "Pegue o kit de facas!", 10f, HEIGHT - 10f);
         }
