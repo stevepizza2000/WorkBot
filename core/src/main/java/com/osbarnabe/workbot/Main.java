@@ -9,6 +9,10 @@ public class Main extends Game {
     public boolean puzzle1Completo = false;
     public boolean npc1PosPuzzleFalou = false;
     public boolean npc3Liberado = false;
+    public boolean puzzle2Completo = false;
+
+    public boolean npc3Falou = false;
+    public boolean npc3PosPuzzleFalou = false;
 
     // 0 = Português, 1 = Espanhol, 2 = Inglês
     public int idioma = 0;

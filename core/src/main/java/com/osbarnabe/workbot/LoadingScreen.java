@@ -44,7 +44,7 @@ public class LoadingScreen implements Screen {
         jogo.assets.load("roboEsq.png",      Texture.class);
         jogo.assets.load("fabrica1.png",     Texture.class);
         jogo.assets.load("fabrica2.png",     Texture.class);
-        jogo.assets.load("fabrica3.png",     Texture.class);
+        jogo.assets.load("Fabrica3sprite.png",Texture.class);
         jogo.assets.load("ceit.png",         Texture.class);
         jogo.assets.load("ceu1.png",         Texture.class);
         jogo.assets.load("ceu2.png",         Texture.class);
@@ -68,6 +68,7 @@ public class LoadingScreen implements Screen {
         jogo.assets.load("BalaoFala_NPC1" + sufixo + ".png", Texture.class);
         jogo.assets.load("BalaoFala_NPC1_2" + sufixo + ".png", Texture.class);
         jogo.assets.load("BalaoFala_NPC3" + sufixo + ".png", Texture.class);
+        jogo.assets.load("BalaoFala_NPC3_2" + sufixo + ".png", Texture.class);
     }
 
     @Override
@@ -75,12 +76,15 @@ public class LoadingScreen implements Screen {
         // Fundo azul Tramontina ou preto (se quiser pode usar 0.0f, 0.12f, 0.37f, 1f)
         ScreenUtils.clear(0f, 0f, 0f, 1f);
 
+        System.out.println("LoadingScreen assets: " + jogo.assets);
+
         if (jogo.assets.update()) {
             jogo.setScreen(new GameScreen(jogo));
         }
 
         float progresso   = jogo.assets.getProgress();
         int porcentagem   = (int) (progresso * 100);
+
 
         camera.update();
         batch.setProjectionMatrix(camera.combined);
