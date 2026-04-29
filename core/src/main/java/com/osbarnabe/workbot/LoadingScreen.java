@@ -44,7 +44,7 @@ public class LoadingScreen implements Screen {
         jogo.assets.load("roboEsq.png",      Texture.class);
         jogo.assets.load("fabrica1.png",     Texture.class);
         jogo.assets.load("fabrica2.png",     Texture.class);
-        jogo.assets.load("fabrica3.png",     Texture.class);
+        jogo.assets.load("Fabrica3sprite.png",     Texture.class);
         jogo.assets.load("ceit.png",         Texture.class);
         jogo.assets.load("ceu1.png",         Texture.class);
         jogo.assets.load("ceu2.png",         Texture.class);
@@ -68,7 +68,7 @@ public class LoadingScreen implements Screen {
         jogo.assets.load("BalaoFala_NPC1" + sufixo + ".png", Texture.class);
         jogo.assets.load("BalaoFala_NPC1_2" + sufixo + ".png", Texture.class);
         jogo.assets.load("BalaoFala_NPC3" + sufixo + ".png", Texture.class);
-        jogo.assets.load("BalaoFala_NPC3_2" + sufixo+ ".png", Texture.class);
+        jogo.assets.load("BalaoFala_NPC3_2" + sufixo + ".png", Texture.class);
     }
 
     @Override
