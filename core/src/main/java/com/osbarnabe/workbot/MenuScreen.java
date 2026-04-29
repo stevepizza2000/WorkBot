@@ -1,4 +1,5 @@
 package com.osbarnabe.workbot;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -30,9 +31,16 @@ public class MenuScreen implements Screen {
     float alturaJanela  = Gdx.graphics.getHeight();
 
     private boolean botoesLiberados = false;
-    private int opcaoSelecionada   = 0;
+    private int opcaoSelecionada = 0;
     private float tempoPressionado = 0;
     private boolean processouBotao = false;
+
+    // 🔥 TEXTOS TRADUZIDOS
+    private String[] textosAFK = {
+        "O jogo vai fechar em: ",
+        "El juego se cerrara en: ",
+        "The game will close in: "
+    };
 
     public MenuScreen(Main jogo) {
         this.jogo = jogo;
@@ -45,13 +53,9 @@ public class MenuScreen implements Screen {
         fontAFK.getData().setScale(2f);
         fontAFK.setColor(Color.RED);
 
-        btnInicio       = new Texture("BotaoInicio.png");
-        btnInicioSelect = new Texture("BotaoInicioSelect.png");
-        btnCreditos       = new Texture("BotaoCreditos.png");
-        btnCreditosSelect = new Texture("BotaoCreditosSelect.png");
-        btnOpcao       = new Texture("BotaoOpcao.png");
-        btnOpcaoSelect = new Texture("BotaoOpcaoSelect.png");
         fundo = new Texture("fundo.png");
+
+        atualizarTexturasIdioma(); // 🔥 importante
     }
 
     @Override
@@ -64,34 +68,40 @@ public class MenuScreen implements Screen {
         if (!esq && !dir) botoesLiberados = true;
 
         if (botoesLiberados) {
+
             if (esq && dir) {
                 if (!processouBotao) {
                     switch (opcaoSelecionada) {
                         case 0: jogo.setScreen(new LoadingScreen(jogo)); break;
                         case 1: jogo.setScreen(new CreditsScreen(jogo)); break;
-                        case 2: jogo.setScreen(new Opcoes(jogo));        break;
+                        case 2: jogo.setScreen(new Opcoes(jogo)); break;
                     }
                     processouBotao = true;
                 }
+
             } else if (esq || dir) {
+
                 if (!processouBotao) {
                     tempoPressionado += delta;
+
                     if (tempoPressionado > 0.02f) {
+
                         if (dir) {
                             opcaoSelecionada++;
-                            tempoAFK = 10f;
                             if (opcaoSelecionada > 2) opcaoSelecionada = 0;
                         } else {
                             opcaoSelecionada--;
-                            tempoAFK = 10f;
                             if (opcaoSelecionada < 0) opcaoSelecionada = 2;
                         }
+
+                        tempoAFK = 10f;
                         processouBotao = true;
                     }
                 }
+
             } else {
                 tempoPressionado = 0;
-                processouBotao   = false;
+                processouBotao = false;
             }
         }
 
@@ -99,21 +109,67 @@ public class MenuScreen implements Screen {
         if (tempoAFK <= limiteAFK) Gdx.app.exit();
 
         batch.begin();
+
         batch.draw(fundo, 0, 0, larguraJanela, alturaJanela);
 
-        // Botão Início
-        batch.draw(opcaoSelecionada == 0 ? btnInicioSelect : btnInicio, larguraJanela/2 - 180, 600, 400, 200);
-        // Botão Créditos
-        batch.draw(opcaoSelecionada == 1 ? btnCreditosSelect : btnCreditos, larguraJanela/2 - 180, 350, 400, 200);
-        // Botão Opções
-        batch.draw(opcaoSelecionada == 2 ? btnOpcaoSelect : btnOpcao, larguraJanela/2 - 180, 100, 400, 200);
+        // Botões
+        batch.draw(opcaoSelecionada == 0 ? btnInicioSelect : btnInicio,
+            larguraJanela/2 - 180, 600, 400, 200);
 
-        // Aviso AFK
+        batch.draw(opcaoSelecionada == 1 ? btnCreditosSelect : btnCreditos,
+            larguraJanela/2 - 180, 350, 400, 200);
+
+        batch.draw(opcaoSelecionada == 2 ? btnOpcaoSelect : btnOpcao,
+            larguraJanela/2 - 180, 100, 400, 200);
+
+        // 🔥 AFK traduzido
         if (tempoAFK <= 5f && tempoAFK > 0f) {
             int seg = (int) Math.ceil(tempoAFK);
-            fontAviso.draw(batch, "O jogo vai fechar em: " + seg, larguraJanela/2 - 300, alturaJanela - 80);
+            fontAviso.draw(batch,
+                textosAFK[jogo.idioma] + seg,
+                larguraJanela/2 - 300,
+                alturaJanela - 80);
         }
+
         batch.end();
+    }
+
+    // 🔥 TROCA DE IMAGENS POR IDIOMA
+    private void atualizarTexturasIdioma() {
+
+        if (btnInicio != null) {
+            btnInicio.dispose(); btnInicioSelect.dispose();
+            btnCreditos.dispose(); btnCreditosSelect.dispose();
+            btnOpcao.dispose(); btnOpcaoSelect.dispose();
+        }
+
+        if (jogo.idioma == 0) {
+            // PORTUGUÊS
+            btnInicio       = new Texture("BotaoInicio.png");
+            btnInicioSelect = new Texture("BotaoInicioSelect.png");
+            btnCreditos     = new Texture("BotaoCreditos.png");
+            btnCreditosSelect = new Texture("BotaoCreditosSelect.png");
+            btnOpcao        = new Texture("BotaoOpcao.png");
+            btnOpcaoSelect  = new Texture("BotaoOpcaoSelect.png");
+
+        } else if (jogo.idioma == 1) {
+            // ESPANHOL
+            btnInicio       = new Texture("BotaoInicio_ES.png");
+            btnInicioSelect = new Texture("BotaoInicioSelect_ES.png");
+            btnCreditos     = new Texture("BotaoCreditos_ES.png");
+            btnCreditosSelect = new Texture("BotaoCreditosSelect_ES.png");
+            btnOpcao        = new Texture("BotaoOpcao_ES.png");
+            btnOpcaoSelect  = new Texture("BotaoOpcaoSelect_ES.png");
+
+        } else {
+            // INGLÊS
+            btnInicio       = new Texture("BotaoInicio_EN.png");
+            btnInicioSelect = new Texture("BotaoInicioSelect_EN.png");
+            btnCreditos     = new Texture("BotaoCreditos_EN.png");
+            btnCreditosSelect = new Texture("BotaoCreditosSelect_EN.png");
+            btnOpcao        = new Texture("BotaoOpcao_EN.png");
+            btnOpcaoSelect  = new Texture("BotaoOpcaoSelect_EN.png");
+        }
     }
 
     @Override public void show() {}
@@ -127,12 +183,15 @@ public class MenuScreen implements Screen {
         batch.dispose();
         fontAviso.dispose();
         fontAFK.dispose();
-        btnInicio.dispose();
-        btnInicioSelect.dispose();
-        btnCreditos.dispose();
-        btnCreditosSelect.dispose();
-        btnOpcao.dispose();
-        btnOpcaoSelect.dispose();
         fundo.dispose();
+
+        if (btnInicio != null) {
+            btnInicio.dispose();
+            btnInicioSelect.dispose();
+            btnCreditos.dispose();
+            btnCreditosSelect.dispose();
+            btnOpcao.dispose();
+            btnOpcaoSelect.dispose();
+        }
     }
 }
