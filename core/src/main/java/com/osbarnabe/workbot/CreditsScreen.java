@@ -37,14 +37,13 @@ public class CreditsScreen implements Screen {
         camera    = new OrthographicCamera();
         viewport  = new FitViewport(largura, altura, camera);
 
-        btnVoltar       = new Texture("BotaoVoltar.png");
-        btnVoltarSelect = new Texture("BotaoVoltarSelect.png");
-
         fonteCargo = new BitmapFont();
         fonteCargo.getData().setScale(2f);
 
         fonteNome = new BitmapFont();
         fonteNome.getData().setScale(3f);
+
+        atualizarTexturasIdioma();
     }
 
     @Override
@@ -121,6 +120,20 @@ public class CreditsScreen implements Screen {
         batch.draw(texturaAtual, (largura / 2f) - 150f, espacamentoY, 300f, 150f);
 
         batch.end();
+    }
+
+    public void atualizarTexturasIdioma(){
+
+        if (jogo.idioma == 0){
+            btnVoltar       = new Texture("BotaoVoltar.png");
+            btnVoltarSelect = new Texture("BotaoVoltarSelect.png");
+        }else if (jogo.idioma == 1){
+            btnVoltar       = new Texture("BotaoVoltar_ES.png");
+            btnVoltarSelect = new Texture("BotaoVoltarSelect_ES.png");
+        }else{
+            btnVoltar       = new Texture("BotaoVoltar_EN.png");
+            btnVoltarSelect = new Texture("BotaoVoltarSelect_EN.png");
+        }
     }
 
     @Override public void resize(int width, int height) { viewport.update(width, height, true); }
