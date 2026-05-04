@@ -54,6 +54,48 @@ public class puzzle1 implements Screen {
     private float barraX;
     private float barraY;
 
+    private String comojogar[] = {
+        "COMO JOGAR",
+        "COMO JUGAR",
+        "HOW TO PLAY"
+    };
+
+    private String setad[] = {
+        "Use a seta DIREITA para mandar para direita",
+        "Utilice la flecha DERECHA para mover el objeto hacia la derecha.",
+        "Use the RIGHT arrow to send it to the right."
+    };
+
+    private String setae[] = {
+        "Use a seta ESQUERDA para mandar para a esquerda",
+        "Utilice la flecha IZQUIERDA para mover el objeto hacia la izquierda.",
+        "Use the LEFT arrow to send it to the left."
+    };
+
+    private String pressione[] = {
+        "Pressione os dois botoes (ESQ + DIR) juntos para iniciar!",
+        "¡Pulsa ambos botones (IZQUIERDA + DERECHA) a la vez para empezar!",
+        "Press both buttons (LEFT + RIGHT) at the same time to begin!"
+    };
+
+    private String acertos[] = {
+        "Acertos: ",
+        "Puntaje: ",
+        "Score: "
+    };
+
+    private String missao[] = {
+        "MISSAO CUMPRIDA!",
+        "MISIÓN CUMPLIDA!",
+        "MISSION ACCOMPLISHED!"
+    };
+
+    private String ferro[] = {
+        "Pegue o ferro para o trabalhador!",
+        "¡Traigan la plancha para el trabajador!",
+        "Bring the iron for the worker!"
+    };
+
     public puzzle1(Main jogo) {
         this.jogo = jogo;
         batch = new SpriteBatch();
@@ -208,17 +250,17 @@ public class puzzle1 implements Screen {
         if (mostrandoTutorial) {
             fonte.setColor(Color.WHITE);
             fonte.getData().setScale(2f);
-            fonte.draw(batch, "COMO JOGAR", larguraJanela / 2f - 100f, alturaJanela - 150f);
+            fonte.draw(batch, comojogar[jogo.idioma], larguraJanela / 2f - 100f, alturaJanela - 150f);
 
             fonte.getData().setScale(1.5f);
-            fonte.draw(batch, "Use a seta DIREITA para mandar o objeto para a direita",
+            fonte.draw(batch, setad[jogo.idioma],
                 larguraJanela / 2f - 200f, alturaJanela / 2f + 100f);
-            fonte.draw(batch, "Use a seta ESQUERDA para mandar para a esquerda",
+            fonte.draw(batch, setae[jogo.idioma],
                 larguraJanela / 2f - 200f, alturaJanela / 2f + 30f);
 
             fonte.setColor(Color.YELLOW);
             fonte.getData().setScale(1.2f);
-            fonte.draw(batch, "Pressione os dois botoes (ESQ + DIR) juntos para iniciar!",
+            fonte.draw(batch, pressione[jogo.idioma],
                 larguraJanela / 2f - 200f, alturaJanela / 2f - 60f);
 
             fonte.setColor(Color.WHITE);
@@ -228,15 +270,15 @@ public class puzzle1 implements Screen {
         else {
             if (!puzzleFinalizado) {
                 fonte.setColor(Color.YELLOW);
-                fonte.draw(batch, "Acertos: " + itensCertos + " / 3", 50f, alturaJanela - 50f);
+                fonte.draw(batch, acertos[jogo.idioma] + itensCertos + " / 3", 50f, alturaJanela - 50f);
             }
 
             //quando o jogo finalizar
             if (puzzleFinalizado) {
                 fonte.setColor(Color.GREEN);
-                fonte.draw(batch, "MISSAO CUMPRIDA!", larguraJanela / 2f - 170f, alturaJanela - 100f);
+                fonte.draw(batch, missao[jogo.idioma], larguraJanela / 2f - 170f, alturaJanela - 100f);
                 fonte.getData().setScale(2f);
-                fonte.draw(batch, "Pegue o ferro para o trabalhador!", larguraJanela / 2f - 180f, alturaJanela - 200f);
+                fonte.draw(batch, ferro[jogo.idioma], larguraJanela / 2f - 180f, alturaJanela - 200f);
 
                 fonte.getData().setScale(4f);
 
