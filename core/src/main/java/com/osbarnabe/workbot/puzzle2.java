@@ -223,7 +223,7 @@ public class puzzle2 implements Screen {
         batch.begin();
 
         batch.draw(texBackground, 0, 0, WIDTH, HEIGHT);
-        batch.draw(texBird, 80f, birdY, 40f, 40f);
+        batch.draw(texBird, 80f, birdY, 55f, 50f);
 
         for (Cano c : canos) {
 
