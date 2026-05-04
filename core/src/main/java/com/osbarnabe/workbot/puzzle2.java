@@ -50,7 +50,7 @@ public class puzzle2 implements Screen {
     private float velX = 0f;
     private final float REBOTE_X = -150f;
 
-    float pipeWidth = 35f;
+    float pipeWidth = 45f;
     float margem    = 5f;
 
     // 🔥 TAMANHO DA FACA (NOVO)
@@ -67,9 +67,21 @@ public class puzzle2 implements Screen {
     private Array<Cano> canos;
     private final float velocidadeCano = 120f;
     private float tempoSpawn = 0f;
-    private final float gap  = 120f;
+private final float gap  = 120f;
 
     private int score = 0;
+
+    private String[] pontos = {
+        "Passe pelos canos: ",
+        "Pasar por las tuberías: ",
+        "Go through the pipes: "
+    };
+
+    private String[] pegarKit = {
+        "Pegue o kit de facas!",
+        "¡Coge el juego de cuchillos!",
+        "Grab the knife set!"
+    };
 
     public puzzle2(Main jogo) {
         this.jogo = jogo;
@@ -139,7 +151,7 @@ public class puzzle2 implements Screen {
 
         if (canos.size > 0 && canos.first().x < -60f) canos.removeIndex(0);
 
-        bird.set(85f, birdY + 5f, 30f, 30f);
+        bird.set(85f, birdY + 5f, 40f, 40f);
 
         for (Cano c : canos) {
 
@@ -243,9 +255,9 @@ public class puzzle2 implements Screen {
         }
 
         if (canosGerados < 5) {
-            font.draw(batch, "Passe pelos canos: " + score + "/5", 10f, HEIGHT - 10f);
+            font.draw(batch, pontos[jogo.idioma] + score + "/5", 10f, HEIGHT - 10f);
         } else {
-            font.draw(batch, "Pegue o kit de facas!", 10f, HEIGHT - 10f);
+            font.draw(batch, pegarKit[jogo.idioma], 10f, HEIGHT - 10f);
         }
 
         if (transicaoAlpha > 0) {
