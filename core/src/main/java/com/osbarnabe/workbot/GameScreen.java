@@ -77,7 +77,7 @@ public class GameScreen implements Screen {
     private boolean dialogoAtivo = false;
     private Texture balaoNPC1;
 
-    private float npc1X = 1850f; // mesma posição do trabalhador
+    private float npc1X = 2280f; // mesma posição do trabalhador
     private float npc1Y = 150f;
     private float raioInteracao = 150f;
 
@@ -383,7 +383,7 @@ public class GameScreen implements Screen {
 
         //barreira NPCs
         if (bloqueioNPC && !debugSemBarreira) {
-            float limite = 2300f; // posição da porta 1 (ajusta se precisar)
+            float limite = 2700f; // posição da porta 1 (ajusta se precisar)
 
             if (roboX + tamanhoRobo > limite) {
                 roboX = limite - tamanhoRobo;
@@ -469,7 +469,7 @@ public class GameScreen implements Screen {
             float largura = frameBotao.getRegionWidth() * escala;
             float altura  = frameBotao.getRegionHeight() * escala;
 
-            float x = npc1X + (200f / 2f) - (largura / 2f);
+            float x = npc1X + (250f / 2f) - (largura / 2f);
             float y = npc1Y + 320f;
 
             batch.draw(frameBotao, x, y, largura, altura);
@@ -480,9 +480,9 @@ public class GameScreen implements Screen {
                 (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou) // depois do puzzle
         ) {
             batch.draw(animacaoPonto.getKeyFrame(elapsedTime, true),
-                1904, 437, 100, 100);
+                2363, 437, 100, 100);
         }
-        batch.draw(animacaoTrabalhador.getKeyFrame(elapsedTime, true),  1820, 210, 260, 260);
+        batch.draw(animacaoTrabalhador.getKeyFrame(elapsedTime, true),  2280, 210, 260, 260);
 
         // BOTÃO PORTA 1
         if (colideComPorta(porta1)) {
