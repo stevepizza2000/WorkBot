@@ -238,7 +238,7 @@ public class puzzle2 implements Screen {
                 float facaX = c.x + (pipeWidth / 2f) - (facaLargura / 2f);
                 float facaY = c.gapY - (facaAltura / 2f);
 
-                batch.draw(texFaca, facaX, facaY, facaLargura, facaAltura);
+                batch.draw(texFaca, facaX+5, facaY, facaLargura, facaAltura);
             }
         }
 
