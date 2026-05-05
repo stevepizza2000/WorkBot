@@ -201,7 +201,6 @@ public class puzzle1 implements Screen {
 
                 // Se tocou, volta pro GameScreen na posição da Porta 1 (X=2650f, Y=50f)
                 if (colidiuX && colidiuY) {
-                    jogo.npc1Completo = true; // 🔥 ESSENCIAL
                     jogo.puzzle1Completo = true;
                     jogo.setScreen(new GameScreen(jogo, 2460f, 65f));
                 }

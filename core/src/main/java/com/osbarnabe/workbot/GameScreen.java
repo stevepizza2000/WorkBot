@@ -283,21 +283,30 @@ public class GameScreen implements Screen {
 
                     dialogoAtivo = false;
 
-                    // PRIMEIRA VEZ
+                    // MARCA PROGRESSÃO AO FECHAR
+
+                    // PRIMEIRA FALA
                     if (!jogo.npc1Completo) {
                         jogo.npc1Completo = true;
-                        bloqueioNPC = false;
                     }
 
-                    // SEGUNDA VEZ (pós puzzle)
-                    else if (jogo.puzzle1Completo) {
+                    // SEGUNDA FALA (pós puzzle)
+                    else if (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou) {
                         jogo.npc1PosPuzzleFalou = true;
                     }
+
                 }
 
                 else if (pertoDoNPC(npc1X)) {
-                    dialogoAtivo = true;
-                    tempoAFK = tempoMaxAFK;
+                    if (!dialogoAtivo) {
+
+                        if (!jogo.npc1Completo ||
+                            (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou)) {
+
+                            dialogoAtivo = true;
+                            tempoAFK = tempoMaxAFK;
+                        }
+                    }
                 }
 
                 else if (pertoDoNPC(npc3X)) {
@@ -522,10 +531,11 @@ public class GameScreen implements Screen {
             // PRIMEIRO DIÁLOGO
             if (!jogo.npc1Completo) {
                 frame = animacaoBalao.getKeyFrame(elapsedTime, true);
-            }
 
-            // SEGUNDO DIÁLOGO
-            else {
+            } else if (!jogo.puzzle1Completo) {
+                frame = animacaoBalao.getKeyFrame(elapsedTime, true); // ou outro se quiser
+
+            } else {
                 frame = animacaoBalao2.getKeyFrame(elapsedTime, true);
             }
 
