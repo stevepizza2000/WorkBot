@@ -237,13 +237,15 @@ private final float gap  = 120f;
         batch.draw(texBackground, 0, 0, WIDTH, HEIGHT);
         batch.draw(texBird, 80f, birdY, 55f, 50f);
 
+        float alturaCano = 400f;
+
         for (Cano c : canos) {
 
             float bottomHeight = c.gapY - gap / 2f;
             float topY         = c.gapY + gap / 2f;
 
-            batch.draw(texPipeDown, c.x, 0f, pipeWidth, bottomHeight);
-            batch.draw(texPipeUp, c.x, topY, pipeWidth, HEIGHT - topY);
+            batch.draw(texPipeDown, c.x, bottomHeight - alturaCano, pipeWidth, alturaCano);
+            batch.draw(texPipeUp, c.x, topY, pipeWidth, alturaCano);
 
             // 🔥 DESENHO CENTRALIZADO DA FACA (NOVO)
             if (c.temFaca && !pegouFaca) {
