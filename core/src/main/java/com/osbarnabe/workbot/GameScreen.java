@@ -58,7 +58,7 @@ public class GameScreen implements Screen {
     private float roboX;
     private float roboY;
     private final float tamanhoRobo  = 330f;
-    private final float velocidadeRobo = 400f;
+    private final float velocidadeRobo = 2000f;
 
     float larguraJanela = Gdx.graphics.getWidth();
     float alturaJanela  = Gdx.graphics.getHeight();
@@ -77,7 +77,7 @@ public class GameScreen implements Screen {
     private boolean dialogoAtivo = false;
     private Texture balaoNPC1;
 
-    private float npc1X = 2280f; // mesma posição do trabalhador
+    private float npc1X = 2580f; // mesma posição do trabalhador
     private float npc1Y = 150f;
     private float raioInteracao = 150f;
 
@@ -91,7 +91,7 @@ public class GameScreen implements Screen {
 
     private boolean dialogoNPC3 = false;
 
-    private float npc3X = 3800f; // usa a mesma posição do trabalhador3
+    private float npc3X = 4300f; // usa a mesma posição do trabalhador3
     private float npc3Y = 140f;
 
     private Texture balaoNPC3;
@@ -235,14 +235,14 @@ public class GameScreen implements Screen {
         roboY = inicioY;
 
         // Porta 1 → leva ao Puzzle 1 (sorting de itens)
-        porta1 = new Porta(2600f, 0f, 150f, alturaJanela - 259f);
+        porta1 = new Porta(2800f, 0f, 150f, alturaJanela - 259f);
         // Porta 2 → leva ao Puzzle 2 (Flappy Bird)
-        porta2 = new Porta(4600f, 0f, 150f, alturaJanela - 259f);
+        porta2 = new Porta(5200f, 0f, 150f, alturaJanela - 259f);
     }
 
     private boolean pertoDoNPC(float npcX) {
         float centroRobo = roboX + (tamanhoRobo / 2f);
-        float centroNPC = npcX + (190f / 2f); // largura do NPC
+        float centroNPC = npcX + (-250f / 2f); // largura do NPC
 
         return Math.abs(centroRobo - centroNPC) < raioInteracao;
     }
@@ -386,13 +386,13 @@ public class GameScreen implements Screen {
         if (roboX < 0f) roboX = 0f;
 
         // Limite direito
-        if (roboX > 6050f) roboX = 6050f;
+        if (roboX > 6850f) roboX = 6850f;
 
         bloqueioNPC = !jogo.npc1Completo;
 
         //barreira NPCs
         if (bloqueioNPC && !debugSemBarreira) {
-            float limite = 2700f; // posição da porta 1 (ajusta se precisar)
+            float limite = 2750f; // posição da porta 1 (ajusta se precisar)
 
             if (roboX + tamanhoRobo > limite) {
                 roboX = limite - tamanhoRobo;
@@ -402,7 +402,7 @@ public class GameScreen implements Screen {
         // 🚧 NOVA BARREIRA (PUZZLE 1)
         if (!jogo.npc1PosPuzzleFalou && !debugSemBarreira) {
 
-            float limitePuzzle = 3000f;
+            float limitePuzzle = 3300f;
 
             if (roboX + tamanhoRobo > limitePuzzle) {
                 roboX = limitePuzzle - tamanhoRobo;
@@ -410,7 +410,7 @@ public class GameScreen implements Screen {
         }
 
         if (!jogo.npc3Liberado && !debugSemBarreira) {
-            float limiteNPC3 = 4300f; // posição da porta (ajusta se precisar)
+            float limiteNPC3 = 4800f; // posição da porta (ajusta se precisar)
 
             if (roboX + tamanhoRobo > limiteNPC3) {
                 roboX = limiteNPC3 - tamanhoRobo;
@@ -419,7 +419,7 @@ public class GameScreen implements Screen {
 
         // 🚧 BARREIRA APÓS PORTA 2 (PUZZLE 2)
         if (!jogo.npc3PosPuzzleFalou && !debugSemBarreira) {
-            float limiteDepoisPorta2 = 5000f; // ajusta se precisar
+            float limiteDepoisPorta2 = 5600f; // ajusta se precisar
 
             if (roboX + tamanhoRobo > limiteDepoisPorta2) {
                 roboX = limiteDepoisPorta2 - tamanhoRobo;
@@ -441,33 +441,33 @@ public class GameScreen implements Screen {
         batch.draw(ceu1Img,        0,    alturaJanela - 259, 800, 259);
         batch.draw(localportaImg,  800,  0, 800, alturaJanela - 259);
         batch.draw(ceu2Img,        800,  alturaJanela - 259, 800, 259);
-        batch.draw(fabrica1Img,    1600, 0, 700, alturaJanela - 259);
-        batch.draw(ceu1Img,        1600, alturaJanela - 259, 700, 259);
-        batch.draw(localporta2Img, 2300, 0, 700, alturaJanela - 259);
-        batch.draw(portaImg,       2300, 0, 700, alturaJanela - 259); // Porta 1
-        batch.draw(ceu2Img,        2300, alturaJanela - 259, 700, 259);
-        batch.draw(fabrica2Img,    2900, 0, 700, alturaJanela - 259);
-        batch.draw(ceu1Img,        2900, alturaJanela - 259, 700, 259);
+        batch.draw(fabrica1Img,    1600, 0, 800, alturaJanela - 259);
+        batch.draw(ceu1Img,        1600, alturaJanela - 259, 800, 259);
+        batch.draw(localporta2Img, 2400, 0, 800, alturaJanela - 259);
+        batch.draw(portaImg,       2400, 0, 800, alturaJanela - 259); // Porta 1
+        batch.draw(ceu2Img,        2400, alturaJanela - 259, 800, 259);
+        batch.draw(fabrica2Img,    3200, 0, 800, alturaJanela - 259);
+        batch.draw(ceu1Img,        3200, alturaJanela - 259, 800, 259);
 
         TextureRegion frameFabrica = animacaoFabrica3.getKeyFrame(elapsedTime, true);
 
-        batch.draw(frameFabrica, 3600, 0, 700, alturaJanela - 259);
+        batch.draw(frameFabrica, 4000, 0, 800, alturaJanela - 259);
 
 
-        batch.draw(ceu2Img,        3600, alturaJanela - 259, 700, 259);
-        batch.draw(localporta3Img, 4300, 0, 700, alturaJanela - 259);
-        batch.draw(portaImg,       4300, 0, 700, alturaJanela - 259); // Porta 2
-        batch.draw(ceu1Img,        4300, alturaJanela - 259, 700, 259);
-        batch.draw(localFinalImg,  4900, 0, 700, alturaJanela-259);
-        batch.draw(ceu2Img,        4900, alturaJanela-259, 700, 259);
-        batch.draw(ceitImg,        5600, 0, 700, alturaJanela-259);
-        batch.draw(ceu1Img,        5600, alturaJanela-259,700, 259);
-        batch.draw(finalImg,       6300, 0, 700, alturaJanela-259);
-        batch.draw(ceu2Img,        6300, alturaJanela-259, 700, 259);
+        batch.draw(ceu2Img,        4000, alturaJanela - 259, 800, 259);
+        batch.draw(localporta3Img, 4800, 0, 800, alturaJanela - 259);
+        batch.draw(portaImg,       4800, 0, 800, alturaJanela - 259); // Porta 2
+        batch.draw(ceu1Img,        4800, alturaJanela - 259, 800, 259);
+        batch.draw(localFinalImg,  5600, 0, 800, alturaJanela-259);
+        batch.draw(ceu2Img,        5600, alturaJanela-259, 800, 259);
+        batch.draw(ceitImg,        6400, 0, 800, alturaJanela-259);
+        batch.draw(ceu1Img,        6400, alturaJanela-259,800, 259);
+        batch.draw(finalImg,       7200, 0, 800, alturaJanela-259);
+        batch.draw(ceu2Img,        7200, alturaJanela-259, 800, 259);
 
         // Trabalhadores animados
-        batch.draw(animacaoTrabalhador2.getKeyFrame(elapsedTime, true), 2970, 210, 260, 260); // <-- Moises da silva santos junior ndv??
-        batch.draw(animacaoTrabalhador3.getKeyFrame(elapsedTime, true), 3770, 170, 380, 380);
+        batch.draw(animacaoTrabalhador2.getKeyFrame(elapsedTime, true), 3270, 210, 260, 260); // <-- Moises da silva santos junior ndv??
+        batch.draw(animacaoTrabalhador3.getKeyFrame(elapsedTime, true), 4170, 170, 380, 380);
 
         // BOTOES E PONTO DE EXCLAMAÇÃO
         if (pertoDoNPC(npc1X)) {
@@ -478,7 +478,7 @@ public class GameScreen implements Screen {
             float largura = frameBotao.getRegionWidth() * escala;
             float altura  = frameBotao.getRegionHeight() * escala;
 
-            float x = npc1X + (250f / 2f) - (largura / 2f);
+            float x = npc1X + (-140f / 2f) - (largura / 2f);
             float y = npc1Y + 320f;
 
             batch.draw(frameBotao, x, y, largura, altura);
@@ -489,9 +489,9 @@ public class GameScreen implements Screen {
                 (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou) // depois do puzzle
         ) {
             batch.draw(animacaoPonto.getKeyFrame(elapsedTime, true),
-                2363, 437, 100, 100);
+                2466, 437, 100, 100);
         }
-        batch.draw(animacaoTrabalhador.getKeyFrame(elapsedTime, true),  2280, 210, 260, 260);
+        batch.draw(animacaoTrabalhador.getKeyFrame(elapsedTime, true),  2380, 210, 260, 260);
 
         // BOTÃO PORTA 1
         if (colideComPorta(porta1)) {
@@ -502,7 +502,7 @@ public class GameScreen implements Screen {
             float largura = frameBotao.getRegionWidth() * escala;
             float altura  = frameBotao.getRegionHeight() * escala;
 
-            float x = porta1.x + (porta1.largura / 2f) - (largura / 2f) - 45f;
+            float x = porta1.x + (porta1.largura / 2f) - (largura / 2f) - 100f;
             float y = 520f;
 
             batch.draw(frameBotao, x, y, largura, altura);
@@ -577,7 +577,7 @@ public class GameScreen implements Screen {
             float largura = frameBotao.getRegionWidth() * escala;
             float altura  = frameBotao.getRegionHeight() * escala;
 
-            float x = 3850 + (100f / 2f) - (largura / 2f);
+            float x = 4150 + (100f / 2f) - (largura / 2f);
             float y = 510;
 
             batch.draw(frameBotao, x, y, largura, altura);
@@ -586,7 +586,7 @@ public class GameScreen implements Screen {
 
             // ❗ SÓ aparece se NUNCA falou com o NPC
             batch.draw(animacaoPonto2.getKeyFrame(elapsedTime, true),
-                3830, 470, 150, 150);
+                4230, 470, 150, 150);
         }
 
         // Robô
@@ -603,7 +603,7 @@ public class GameScreen implements Screen {
         }
         batch.draw(frame, roboX, roboY, tamanhoRobo, tamanhoRobo);
         batch.draw(portinhaImg,    0, 0, 800, alturaJanela - 259);
-        batch.draw(portinha2Img,   4900, 0, 700, alturaJanela-259);
+        batch.draw(portinha2Img,   5600, 0, 800, alturaJanela-259);
 
         // Aviso AFK
         if (tempoAFK <= 5f && tempoAFK > 0f) {
