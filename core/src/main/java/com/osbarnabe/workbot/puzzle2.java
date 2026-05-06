@@ -237,7 +237,7 @@ private final float gap  = 120f;
         batch.draw(texBackground, 0, 0, WIDTH, HEIGHT);
         batch.draw(texBird, 80f, birdY, 55f, 50f);
 
-        float alturaCano = 400f;
+        float alturaCano = 300f;
 
         for (Cano c : canos) {
 
