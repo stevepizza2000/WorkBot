@@ -58,7 +58,7 @@ public class GameScreen implements Screen {
     private float roboX;
     private float roboY;
     private final float tamanhoRobo  = 330f;
-    private final float velocidadeRobo = 2000f;
+    private final float velocidadeRobo = 400f;
 
     float larguraJanela = Gdx.graphics.getWidth();
     float alturaJanela  = Gdx.graphics.getHeight();
@@ -235,14 +235,14 @@ public class GameScreen implements Screen {
         roboY = inicioY;
 
         // Porta 1 → leva ao Puzzle 1 (sorting de itens)
-        porta1 = new Porta(2800f, 0f, 150f, alturaJanela - 259f);
+        porta1 = new Porta(2750f, 0f, 150f, alturaJanela - 259f);
         // Porta 2 → leva ao Puzzle 2 (Flappy Bird)
-        porta2 = new Porta(5200f, 0f, 150f, alturaJanela - 259f);
+        porta2 = new Porta(5100f, 0f, 150f, alturaJanela - 259f);
     }
 
-    private boolean pertoDoNPC(float npcX) {
+    private boolean pertoDoNPC(float npcX, float offsetX) {
         float centroRobo = roboX + (tamanhoRobo / 2f);
-        float centroNPC = npcX + (-250f / 2f); // largura do NPC
+        float centroNPC = npcX + offsetX;
 
         return Math.abs(centroRobo - centroNPC) < raioInteracao;
     }
@@ -297,7 +297,7 @@ public class GameScreen implements Screen {
 
                 }
 
-                else if (pertoDoNPC(npc1X)) {
+                else if (pertoDoNPC(npc1X, -180f)) {
                     if (!dialogoAtivo) {
 
                         if (!jogo.npc1Completo ||
@@ -309,7 +309,7 @@ public class GameScreen implements Screen {
                     }
                 }
 
-                else if (pertoDoNPC(npc3X)) {
+                else if (pertoDoNPC(npc3X, 400f)) {
 
                     if (dialogoNPC3) {
 
@@ -467,10 +467,10 @@ public class GameScreen implements Screen {
 
         // Trabalhadores animados
         batch.draw(animacaoTrabalhador2.getKeyFrame(elapsedTime, true), 3270, 210, 260, 260); // <-- Moises da silva santos junior ndv??
-        batch.draw(animacaoTrabalhador3.getKeyFrame(elapsedTime, true), 4170, 170, 380, 380);
+        batch.draw(animacaoTrabalhador3.getKeyFrame(elapsedTime, true), 4570, 170, 380, 380);
 
         // BOTOES E PONTO DE EXCLAMAÇÃO
-        if (pertoDoNPC(npc1X)) {
+        if (pertoDoNPC(npc1X, -180f)) {
 
             TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
 
@@ -502,7 +502,7 @@ public class GameScreen implements Screen {
             float largura = frameBotao.getRegionWidth() * escala;
             float altura  = frameBotao.getRegionHeight() * escala;
 
-            float x = porta1.x + (porta1.largura / 2f) - (largura / 2f) - 100f;
+            float x = porta1.x + (porta1.largura / 2f) - (largura / 2f) - 50f;
             float y = 520f;
 
             batch.draw(frameBotao, x, y, largura, altura);
@@ -517,7 +517,7 @@ public class GameScreen implements Screen {
             float largura = frameBotao.getRegionWidth() * escala;
             float altura  = frameBotao.getRegionHeight() * escala;
 
-            float x = porta2.x + (porta2.largura / 2f) - (largura / 2f) - 45;
+            float x = porta2.x + (porta2.largura / 2f) - (largura / 2f) - 0;
             float y = 520f;
 
             batch.draw(frameBotao, x, y, largura, altura);
@@ -568,7 +568,7 @@ public class GameScreen implements Screen {
         }
 
         // BOTÃO DE INTERAÇÃO NPC3
-        if (pertoDoNPC(npc3X)) {
+        if (pertoDoNPC(npc3X, 400f)) {
 
             // 🔘 BOTÃO (continua normal)
             TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
@@ -577,7 +577,7 @@ public class GameScreen implements Screen {
             float largura = frameBotao.getRegionWidth() * escala;
             float altura  = frameBotao.getRegionHeight() * escala;
 
-            float x = 4150 + (100f / 2f) - (largura / 2f);
+            float x = 4780 + (100f / 2f) - (largura / 2f);
             float y = 510;
 
             batch.draw(frameBotao, x, y, largura, altura);
@@ -586,7 +586,7 @@ public class GameScreen implements Screen {
 
             // ❗ SÓ aparece se NUNCA falou com o NPC
             batch.draw(animacaoPonto2.getKeyFrame(elapsedTime, true),
-                4230, 470, 150, 150);
+                4755, 470, 150, 150);
         }
 
         // Robô
