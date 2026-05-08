@@ -32,7 +32,7 @@ public class puzzle2 implements Screen {
 
     private float recuoX = 0f;
     private float distanciaPercorrida = 0f;
-    private final float DISTANCIA_ENTRE_CANOS = 220f;
+    private final float DISTANCIA_ENTRE_CANOS = 290f;
     private int canosGerados = 0;
 
     private Rectangle bird;
@@ -50,7 +50,7 @@ public class puzzle2 implements Screen {
     private float velX = 0f;
     private final float REBOTE_X = -150f;
 
-    float pipeWidth = 45f;
+    float pipeWidth = 60f;
     float margem    = 5f;
 
     // 🔥 TAMANHO DA FACA (NOVO)
@@ -65,7 +65,7 @@ public class puzzle2 implements Screen {
     }
 
     private Array<Cano> canos;
-    private final float velocidadeCano = 120f;
+    private final float velocidadeCano = 140f;
     private float tempoSpawn = 0f;
 private final float gap  = 120f;
 
@@ -83,8 +83,15 @@ private final float gap  = 120f;
         "Grab the knife set!"
     };
 
+    private float tempoAnimacao = 0f;
+
+    // textura da aura
+    private Texture texAura;
+
     public puzzle2(Main jogo) {
         this.jogo = jogo;
+
+
 
         batch  = new SpriteBatch();
         camera = new OrthographicCamera();
@@ -103,6 +110,28 @@ private final float gap  = 120f;
         texPreto = new Texture(pixmap);
         pixmap.dispose();
 
+        Pixmap auraPixmap = new Pixmap(128, 128, Pixmap.Format.RGBA8888);
+
+        for (int y = 0; y < 128; y++) {
+            for (int x = 0; x < 128; x++) {
+
+                float dx = x - 64;
+                float dy = y - 64;
+
+                float dist = (float)Math.sqrt(dx * dx + dy * dy);
+
+                float alpha = 1f - (dist / 64f);
+
+                alpha = Math.max(0f, alpha);
+
+                auraPixmap.setColor(1f, 1f, 0.7f, alpha * 0.35f);
+                auraPixmap.drawPixel(x, y);
+            }
+        }
+
+        texAura = new Texture(auraPixmap);
+        auraPixmap.dispose();
+
         facaRect = new Rectangle();
         bird = new Rectangle();
         pipeBottom = new Rectangle();
@@ -116,6 +145,8 @@ private final float gap  = 120f;
         Boolean dir = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         velY += GRAVIDADE * delta;
         birdY += velY * delta;
+
+        tempoAnimacao += delta;
 
         if (esq && dir) {
             velY = PULO;
@@ -138,7 +169,7 @@ private final float gap  = 120f;
             c.x = WIDTH;
             c.gapY = MathUtils.random(120, 340);
 
-            if (canosGerados >= 5) {
+            if (canosGerados == 6) {
                 c.temFaca = true;
             }
 
@@ -195,9 +226,15 @@ private final float gap  = 120f;
                     }
                 }
             }
+            float centroCano = c.x + pipeWidth / 2f;
+            float centroBird = 85f + 10f;
 
-            if (c.x + pipeWidth < 80f && !c.passou) {
-                score++;
+            if (centroCano < centroBird && !c.passou) {
+
+                if (!c.temFaca) {
+                    score++;
+                }
+
                 c.passou = true;
             }
         }
@@ -235,7 +272,7 @@ private final float gap  = 120f;
         batch.begin();
 
         batch.draw(texBackground, 0, 0, WIDTH, HEIGHT);
-        batch.draw(texBird, 80f, birdY, 55f, 50f);
+        batch.draw(texBird, 80f, birdY, 80f, 50f);
 
         float alturaCano = 300f;
 
@@ -249,17 +286,40 @@ private final float gap  = 120f;
 
             // 🔥 DESENHO CENTRALIZADO DA FACA (NOVO)
             if (c.temFaca && !pegouFaca) {
-                float facaX = c.x + (pipeWidth / 2f) - (facaLargura / 2f);
-                float facaY = c.gapY - (facaAltura / 2f);
 
-                batch.draw(texFaca, facaX+5, facaY, facaLargura, facaAltura);
+                float flutuar = MathUtils.sin(tempoAnimacao * 2f) * 6f;
+
+                float facaX = c.x + (pipeWidth / 2f) - (facaLargura / 2f);
+                float facaY = c.gapY - (facaAltura / 2f) + flutuar;
+
+                // aura
+                batch.setColor(1f, 1f, 1f, 0.8f);
+
+                batch.draw(
+                    texAura,
+                    facaX - 35,
+                    facaY - 35,
+                    facaLargura + 70,
+                    facaAltura + 70
+                );
+
+                batch.setColor(1f, 1f, 1f, 1f);
+
+                // faca
+                batch.draw(
+                    texFaca,
+                    facaX,
+                    facaY,
+                    facaLargura,
+                    facaAltura
+                );
             }
         }
 
-        if (canosGerados < 5) {
-            font.draw(batch, pontos[jogo.idioma] + score + "/5", 10f, HEIGHT - 10f);
-        } else {
-            font.draw(batch, pegarKit[jogo.idioma], 10f, HEIGHT - 10f);
+        font.draw(batch, pontos[jogo.idioma] + score + "/5", 10f, HEIGHT - 10f);
+
+        if (score >= 5 && !pegouFaca) {
+            font.draw(batch, pegarKit[jogo.idioma], 10f, HEIGHT - 35f);
         }
 
         if (transicaoAlpha > 0) {
