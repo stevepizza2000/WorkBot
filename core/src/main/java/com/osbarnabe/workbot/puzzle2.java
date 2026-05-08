@@ -218,7 +218,7 @@ private final float gap  = 120f;
                 transicaoAlpha = 1f;
                 jogo.puzzle2Completo = true;
                 jogo.npc3PosPuzzleFalou = false;
-                jogo.setScreen(new GameScreen(jogo, 4665f, 65f));
+                jogo.setScreen(new GameScreen(jogo, 5020f, 65f));
             }
         }
     }

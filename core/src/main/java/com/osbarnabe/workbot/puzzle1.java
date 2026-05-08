@@ -159,7 +159,7 @@ public class puzzle1 implements Screen {
                     if (objeto.x > larguraJanela / 2f + 150f)      verificarAcerto(caixaVerde);
                     else if (objeto.x < larguraJanela / 2f - 100f) verificarAcerto(caixaVermelha);
 
-                    if (itensCertos >= 3) {
+                    if (itensCertos >= 4) {
                         puzzleFinalizado = true; // DESTRANCA O JOGO
 
                         // Define onde a barra de ferro nasce
@@ -202,7 +202,7 @@ public class puzzle1 implements Screen {
                 // Se tocou, volta pro GameScreen na posição da Porta 1 (X=2650f, Y=50f)
                 if (colidiuX && colidiuY) {
                     jogo.puzzle1Completo = true;
-                    jogo.setScreen(new GameScreen(jogo, 2460f, 65f));
+                    jogo.setScreen(new GameScreen(jogo, 2560f, 65f));
                 }
             }
 
@@ -269,7 +269,7 @@ public class puzzle1 implements Screen {
         else {
             if (!puzzleFinalizado) {
                 fonte.setColor(Color.YELLOW);
-                fonte.draw(batch, acertos[jogo.idioma] + itensCertos + " / 3", 50f, alturaJanela - 50f);
+                fonte.draw(batch, acertos[jogo.idioma] + itensCertos + " / 4", 50f, alturaJanela - 50f);
             }
 
             //quando o jogo finalizar
@@ -292,7 +292,7 @@ public class puzzle1 implements Screen {
     private void spawnObjeto() {
         objeto = new ObjetoCaindo(
             larguraJanela / 2f,
-            alturaJanela / 2f - 280f,
+            alturaJanela - 100f,
             MathUtils.randomBoolean()
         );
     }

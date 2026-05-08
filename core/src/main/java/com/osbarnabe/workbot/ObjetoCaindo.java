@@ -14,7 +14,7 @@ public class ObjetoCaindo {
     float larguraJanela = Gdx.graphics.getWidth();
 
     public float x, y;
-    public float velocidadeY = 150f;
+    public float velocidadeY = 600f;
     public boolean correto;
 
     private Texture textura;

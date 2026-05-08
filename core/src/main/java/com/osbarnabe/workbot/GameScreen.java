@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -36,6 +37,12 @@ public class GameScreen implements Screen {
     private Animation<TextureRegion> animacaoPonto2;
 
     private float elapsedTime = 0f;
+
+    // Mensagem quando bate na barreira
+
+    private String mensagemBarreira = "";
+    private float tempoMensagemBarreira = 0f;
+
 
     // Cronômetro AFK
     private float tempoAFK = 15f;
@@ -273,6 +280,10 @@ public class GameScreen implements Screen {
 
         elapsedTime += delta;
 
+        if (tempoMensagemBarreira > 0) {
+            tempoMensagemBarreira -= delta;
+        }
+
         //interação NPCs
         if (esq && dir) {
             tempoAFK = 10f;
@@ -351,6 +362,10 @@ public class GameScreen implements Screen {
         }
 
         if (dialogoAtivo || dialogoNPC3) {
+
+            mensagemBarreira = "";
+            tempoMensagemBarreira = 0f;
+
             esq = false;
             dir = false;
             tempoAFK = tempoMaxAFK;
@@ -396,33 +411,45 @@ public class GameScreen implements Screen {
 
             if (roboX + tamanhoRobo > limite) {
                 roboX = limite - tamanhoRobo;
+
+                mensagemBarreira = "Fale com o trabalhador primeiro!";
+                tempoMensagemBarreira = 3f;
             }
         }
 
         // 🚧 NOVA BARREIRA (PUZZLE 1)
         if (!jogo.npc1PosPuzzleFalou && !debugSemBarreira) {
 
-            float limitePuzzle = 3300f;
+            float limitePuzzle = 3200f;
 
             if (roboX + tamanhoRobo > limitePuzzle) {
                 roboX = limitePuzzle - tamanhoRobo;
+
+                mensagemBarreira = "Complete o Puzzle 1 primeiro e entregue a barra de ferro!";
+                tempoMensagemBarreira = 3f;
             }
         }
 
         if (!jogo.npc3Liberado && !debugSemBarreira) {
-            float limiteNPC3 = 4800f; // posição da porta (ajusta se precisar)
+            float limiteNPC3 = 5150f; // posição da porta (ajusta se precisar)
 
             if (roboX + tamanhoRobo > limiteNPC3) {
                 roboX = limiteNPC3 - tamanhoRobo;
+
+                mensagemBarreira = "Converse com o trabalhador!";
+                tempoMensagemBarreira = 3f;
             }
         }
 
         // 🚧 BARREIRA APÓS PORTA 2 (PUZZLE 2)
         if (!jogo.npc3PosPuzzleFalou && !debugSemBarreira) {
-            float limiteDepoisPorta2 = 5600f; // ajusta se precisar
+            float limiteDepoisPorta2 = 5550f; // ajusta se precisar
 
             if (roboX + tamanhoRobo > limiteDepoisPorta2) {
                 roboX = limiteDepoisPorta2 - tamanhoRobo;
+
+                mensagemBarreira = "Finalize o Puzzle 2 e entregue o kit de facas!";
+                tempoMensagemBarreira = 3f;
             }
         }
 
@@ -609,7 +636,30 @@ public class GameScreen implements Screen {
         if (tempoAFK <= 5f && tempoAFK > 0f) {
             int seg = (int) Math.ceil(tempoAFK);
             fonte.draw(batch, textosAFK[jogo.idioma] + seg,
-                camera.position.x - 250f, camera.position.y + 400f);
+                camera.position.x - 250f, camera.position.y + 800f);
+        }
+
+        if (tempoMensagemBarreira > 0 && !dialogoAtivo && !dialogoNPC3) {
+
+            fonte.setColor(Color.RED);
+            fonte.getData().setScale(2f);
+
+
+            GlyphLayout layout = new GlyphLayout(fonte, mensagemBarreira);
+
+            float textoX = camera.position.x - (layout.width / 2f);
+            float textoY = camera.position.y + 800f;
+
+
+            fonte.setColor(Color.BLACK);
+            fonte.draw(batch, mensagemBarreira, textoX + 2f, textoY - 2f);
+
+
+            fonte.setColor(Color.RED);
+            fonte.draw(batch, mensagemBarreira, textoX, textoY);
+
+            fonte.setColor(Color.WHITE);
+            fonte.getData().setScale(3f);
         }
 
         batch.end();
