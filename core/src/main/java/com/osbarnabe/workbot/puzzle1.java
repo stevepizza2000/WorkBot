@@ -248,19 +248,19 @@ public class puzzle1 implements Screen {
         // Tela de tutorial
         if (mostrandoTutorial) {
             fonte.setColor(Color.WHITE);
-            fonte.getData().setScale(2f);
-            fonte.draw(batch, comojogar[jogo.idioma], larguraJanela / 2f - 100f, alturaJanela - 150f);
+            fonte.getData().setScale(2.5f);
+            fonte.draw(batch, comojogar[jogo.idioma], larguraJanela / 2f - 130f, alturaJanela - 150f);
 
-            fonte.getData().setScale(1.5f);
+            fonte.getData().setScale(2f);
             fonte.draw(batch, setad[jogo.idioma],
-                larguraJanela / 2f - 200f, alturaJanela / 2f + 100f);
+                larguraJanela / 2f - 290f, alturaJanela - 500f);
             fonte.draw(batch, setae[jogo.idioma],
-                larguraJanela / 2f - 200f, alturaJanela / 2f + 30f);
+                larguraJanela / 2f - 340f, alturaJanela - 600f);
 
             fonte.setColor(Color.YELLOW);
-            fonte.getData().setScale(1.2f);
+            fonte.getData().setScale(2f);
             fonte.draw(batch, pressione[jogo.idioma],
-                larguraJanela / 2f - 200f, alturaJanela / 2f - 60f);
+                larguraJanela / 2f - 360f, alturaJanela - 700f);
 
             fonte.setColor(Color.WHITE);
             fonte.getData().setScale(3f);
