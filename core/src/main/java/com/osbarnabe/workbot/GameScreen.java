@@ -65,7 +65,7 @@ public class GameScreen implements Screen {
     private float roboX;
     private float roboY;
     private final float tamanhoRobo  = 330f;
-    private final float velocidadeRobo = 400f;
+    private final float velocidadeRobo = 1200f;
 
     float larguraJanela = Gdx.graphics.getWidth();
     float alturaJanela  = Gdx.graphics.getHeight();
