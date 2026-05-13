@@ -32,7 +32,7 @@ public class puzzle2 implements Screen {
 
     private float recuoX = 0f;
     private float distanciaPercorrida = 0f;
-    private final float DISTANCIA_ENTRE_CANOS = 220f;
+    private final float DISTANCIA_ENTRE_CANOS = 280f;
     private int canosGerados = 0;
 
     private Rectangle bird;
@@ -50,12 +50,12 @@ public class puzzle2 implements Screen {
     private float velX = 0f;
     private final float REBOTE_X = -150f;
 
-    float pipeWidth = 45f;
+    float pipeWidth = 65f;
     float margem    = 5f;
 
     // 🔥 TAMANHO DA FACA (NOVO)
-    private float facaLargura = 40f;
-    private float facaAltura  = 40f;
+    private float facaLargura = 65f;
+    private float facaAltura  = 65f;
 
     private static class Cano {
         float x;
@@ -65,7 +65,7 @@ public class puzzle2 implements Screen {
     }
 
     private Array<Cano> canos;
-    private final float velocidadeCano = 120f;
+    private final float velocidadeCano = 160f;
     private float tempoSpawn = 0f;
 private final float gap  = 120f;
 
@@ -82,6 +82,8 @@ private final float gap  = 120f;
         "¡Coge el juego de cuchillos!",
         "Grab the knife set!"
     };
+
+    private float tempoAnimacao = 0f;
 
     public puzzle2(Main jogo) {
         this.jogo = jogo;
@@ -116,6 +118,7 @@ private final float gap  = 120f;
         Boolean dir = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         velY += GRAVIDADE * delta;
         birdY += velY * delta;
+        tempoAnimacao += delta;
 
         if (esq && dir) {
             velY = PULO;
@@ -132,13 +135,14 @@ private final float gap  = 120f;
 
         if (distanciaPercorrida >= DISTANCIA_ENTRE_CANOS) {
             distanciaPercorrida = 0;
-            canosGerados++;
+            canosGerados++; // Contador total de canos criados
 
             Cano c = new Cano();
             c.x = WIDTH;
             c.gapY = MathUtils.random(120, 340);
 
-            if (canosGerados >= 5) {
+            // 🔥 SPAWNA A FACA EXATAMENTE NO CANO 6
+            if (canosGerados == 6) {
                 c.temFaca = true;
             }
 
@@ -151,7 +155,7 @@ private final float gap  = 120f;
 
         if (canos.size > 0 && canos.first().x < -60f) canos.removeIndex(0);
 
-        bird.set(85f, birdY + 5f, 40f, 40f);
+        bird.set(80f, birdY, 65f, 50f); // X e tamanho iguais ao desenho
 
         for (Cano c : canos) {
 
@@ -197,7 +201,10 @@ private final float gap  = 120f;
             }
 
             if (c.x + pipeWidth < 80f && !c.passou) {
-                score++;
+                // 🔥 Só aumenta o score se ainda não chegou em 5
+                if (score < 5) {
+                    score++;
+                }
                 c.passou = true;
             }
         }
@@ -223,6 +230,8 @@ private final float gap  = 120f;
         }
     }
 
+
+
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0.4f, 0.7f, 1f, 1f);
@@ -235,33 +244,72 @@ private final float gap  = 120f;
         batch.begin();
 
         batch.draw(texBackground, 0, 0, WIDTH, HEIGHT);
-        batch.draw(texBird, 80f, birdY, 55f, 50f);
+        batch.draw(texBird, 80f, birdY, 75f, 50f);
 
         float alturaCano = 300f;
 
         for (Cano c : canos) {
 
             float bottomHeight = c.gapY - gap / 2f;
-            float topY         = c.gapY + gap / 2f;
+            float topY = c.gapY + gap / 2f;
 
             batch.draw(texPipeDown, c.x, bottomHeight - alturaCano, pipeWidth, alturaCano);
             batch.draw(texPipeUp, c.x, topY, pipeWidth, alturaCano);
+
+// 🔥 DESENHO DA FACA COM TODAS AS ANIMAÇÕES UNIFICADAS
+            if (c.temFaca && !pegouFaca) {
+                // 1. Cálculos de Animação
+                float flutuarY = MathUtils.sin(tempoAnimacao * 4f) * 8f;
+                float escala = 1f + MathUtils.sin(tempoAnimacao * 2f) * 0.1f;
+                float rotacaO = MathUtils.sin(tempoAnimacao * 2f) * 10f;
+
+                float largAnimada = facaLargura * escala;
+                float altAnimada = facaAltura * escala;
+                float facaX = c.x + (pipeWidth / 2f) - (largAnimada / 2f);
+                float facaY = c.gapY - (altAnimada / 2f) + flutuarY;
+
+                // 2. Desenhar o Brilho (Atrás)
+                float brilhoAlpha = 0.3f + MathUtils.sin(tempoAnimacao * 5f) * 0.2f;
+                batch.setColor(1, 1, 0, brilhoAlpha); // Amarelo neon
+                batch.draw(texFaca, facaX - 2, facaY - 2, largAnimada + 4, altAnimada + 4);
+
+                // 3. Desenhar a Faca Principal (Com rotação e escala)
+                batch.setColor(1, 1, 1, 1); // Resetar cor para branco total
+                batch.draw(texFaca,
+                    facaX, facaY,
+                    largAnimada / 2f, altAnimada / 2f,
+                    largAnimada, altAnimada,
+                    1f, 1f,
+                    rotacaO,
+                    0, 0, texFaca.getWidth(), texFaca.getHeight(),
+                    false, false);
+            }
+
 
             // 🔥 DESENHO CENTRALIZADO DA FACA (NOVO)
             if (c.temFaca && !pegouFaca) {
                 float facaX = c.x + (pipeWidth / 2f) - (facaLargura / 2f);
                 float facaY = c.gapY - (facaAltura / 2f);
-
-                batch.draw(texFaca, facaX+5, facaY, facaLargura, facaAltura);
             }
         }
 
-        if (canosGerados < 5) {
-            font.draw(batch, pontos[jogo.idioma] + score + "/5", 10f, HEIGHT - 10f);
-        } else {
-            font.draw(batch, pegarKit[jogo.idioma], 10f, HEIGHT - 10f);
+        // ... (fim do loop for dos canos)
+
+        // 🔥 LÓGICA DAS MENSAGENS (Canto Superior Esquerdo)
+        // Reduzimos a margemX para 5f para encostar mais no canto
+        float margemX = 5f;
+        // Subimos um pouco o texto base (quase no limite da tela)
+        float alturaBase = HEIGHT - 10f;
+
+        // 1. Contador principal
+        font.draw(batch, pontos[jogo.idioma] + score + "/5", margemX, alturaBase);
+
+        // 2. Mensagem secundária (diminuímos o espaço de 35f para 20f)
+        if (score >= 5) {
+            font.draw(batch, pegarKit[jogo.idioma], margemX, alturaBase - 22f);
         }
 
+        // Transição de saída (Fade Out)
         if (transicaoAlpha > 0) {
             batch.setColor(1, 1, 1, transicaoAlpha);
             batch.draw(texPreto, 0, 0, WIDTH, HEIGHT);
