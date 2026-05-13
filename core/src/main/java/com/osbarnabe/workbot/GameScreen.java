@@ -58,7 +58,7 @@ public class GameScreen implements Screen {
     private float roboX;
     private float roboY;
     private final float tamanhoRobo  = 330f;
-    private final float velocidadeRobo = 1200f;
+    private float velocidadeRobo = 500f;
 
     float larguraJanela = Gdx.graphics.getWidth();
     float alturaJanela  = Gdx.graphics.getHeight();
@@ -118,8 +118,7 @@ public class GameScreen implements Screen {
         "The game will close in: "   // EN
     };
 
-
-
+    private boolean velocidadeRapida = false;
 
     public GameScreen(Main jogo) {
         this(jogo, 100f, 65f);
@@ -256,6 +255,20 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
             debugSemBarreira = !debugSemBarreira;
             System.out.println("DEBUG barreiras: " + debugSemBarreira);
+        }
+
+        // Lógica para alternar velocidade com a tecla S
+        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            velocidadeRapida = !velocidadeRapida; // Inverte o estado (true vira false e vice-versa)
+
+            if (velocidadeRapida) {
+                velocidadeRobo = 2500f;
+            } else {
+                velocidadeRobo = 500f;
+            }
+
+            // Opcional: print para confirmar no console
+            System.out.println("Velocidade alterada para: " + velocidadeRobo);
         }
 
         // Troca de tela ao fechar a porta
