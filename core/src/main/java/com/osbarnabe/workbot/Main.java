@@ -5,6 +5,8 @@ import com.badlogic.gdx.assets.AssetManager;
 
 public class Main extends Game {
     public boolean npc1Completo = false;
+    public boolean npc1Fase2Falou = false;
+    public boolean npc3Fase2Falou = false;
     public boolean puzzle1Completo = false;
     public boolean npc1PosPuzzleFalou = false;
     public boolean npc3Liberado = false;

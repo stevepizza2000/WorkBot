@@ -14,6 +14,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.utils.Align;
 
 public class GameScreen implements Screen {
 
@@ -141,9 +143,22 @@ public class GameScreen implements Screen {
         this.jogo = jogo;
         batch = new SpriteBatch();
 
-        fonte = new BitmapFont();
-        fonte.getData().setScale(3f);
-        fonte.setColor(Color.WHITE);
+        //fonte = new BitmapFont();
+        //fonte.getData().setScale(3f);
+        //fonte.setColor(Color.WHITE);
+
+        FreeTypeFontGenerator generator =
+            new FreeTypeFontGenerator(Gdx.files.internal("assets/fonts/PixelifySans-Regular.ttf"));
+
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter =
+            new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+        parameter.size = 32;
+        parameter.color = Color.WHITE;
+
+        fonte = generator.generateFont(parameter);
+
+        generator.dispose();
 
         camera = new OrthographicCamera();
         viewport = new FitViewport(larguraJanela, alturaJanela, camera);
@@ -307,25 +322,31 @@ public class GameScreen implements Screen {
 
                     dialogoAtivo = false;
 
-                    // MARCA PROGRESSÃO AO FECHAR
-
                     // PRIMEIRA FALA
                     if (!jogo.npc1Completo) {
                         jogo.npc1Completo = true;
                     }
 
-                    // SEGUNDA FALA (pós puzzle)
+                    // SEGUNDA FALA
                     else if (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou) {
                         jogo.npc1PosPuzzleFalou = true;
                     }
 
+                    // TERCEIRA FALA
+                    else if (jogo.npc1PosPuzzleFalou && !jogo.npc1Fase2Falou) {
+                        jogo.npc1Fase2Falou = true;
+                    }
                 }
 
                 else if (pertoDoNPC(npc1X, -180f)) {
+
                     if (!dialogoAtivo) {
 
-                        if (!jogo.npc1Completo ||
-                            (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou)) {
+                        if (
+                            !jogo.npc1Completo ||
+                                (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou) ||
+                                (jogo.npc1PosPuzzleFalou && !jogo.npc1Fase2Falou)
+                        ) {
 
                             dialogoAtivo = true;
                             tempoAFK = tempoMaxAFK;
@@ -420,16 +441,15 @@ public class GameScreen implements Screen {
 
         //barreira NPCs
         if (bloqueioNPC && !debugSemBarreira) {
-            float limite = 2750f; // posição da porta 1 (ajusta se precisar)
-
+            float limite = 2750f;
             if (roboX + tamanhoRobo > limite) {
                 roboX = limite - tamanhoRobo;
-
                 mensagemBarreira = "Fale com o trabalhador primeiro!";
                 tempoMensagemBarreira = 3f;
             }
         }
 
+        // 🚧 NOVA BARREIRA (PUZZLE 1)
         // 🚧 NOVA BARREIRA (PUZZLE 1)
         if (!jogo.npc1PosPuzzleFalou && !debugSemBarreira) {
 
@@ -438,7 +458,11 @@ public class GameScreen implements Screen {
             if (roboX + tamanhoRobo > limitePuzzle) {
                 roboX = limitePuzzle - tamanhoRobo;
 
-                mensagemBarreira = "Complete o Puzzle 1 primeiro e entregue a barra de ferro!";
+                if (!jogo.puzzle1Completo) {
+                    mensagemBarreira = "Complete o Puzzle 1 primeiro!";
+                } else {
+                    mensagemBarreira = "Converse com o trabalhador \nnovamente!";
+                }
                 tempoMensagemBarreira = 3f;
             }
         }
@@ -455,13 +479,18 @@ public class GameScreen implements Screen {
         }
 
         // 🚧 BARREIRA APÓS PORTA 2 (PUZZLE 2)
+        // 🚧 BARREIRA APÓS PORTA 2 (PUZZLE 2)
         if (!jogo.npc3PosPuzzleFalou && !debugSemBarreira) {
             float limiteDepoisPorta2 = 5550f; // ajusta se precisar
 
             if (roboX + tamanhoRobo > limiteDepoisPorta2) {
                 roboX = limiteDepoisPorta2 - tamanhoRobo;
 
-                mensagemBarreira = "Finalize o Puzzle 2 e entregue o kit de facas!";
+                if (!jogo.puzzle2Completo) {
+                    mensagemBarreira = "Finalize o Puzzle 2 primeiro!";
+                } else {
+                    mensagemBarreira = "Converse com o trabalhador \nnovamente!";
+                }
                 tempoMensagemBarreira = 3f;
             }
         }
@@ -572,8 +601,8 @@ public class GameScreen implements Screen {
             if (!jogo.npc1Completo) {
                 frame = animacaoBalao.getKeyFrame(elapsedTime, true);
 
-            } else if (!jogo.puzzle1Completo) {
-                frame = animacaoBalao.getKeyFrame(elapsedTime, true); // ou outro se quiser
+            } else if (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou) {
+                frame = animacaoBalao2.getKeyFrame(elapsedTime, true);
 
             } else {
                 frame = animacaoBalao2.getKeyFrame(elapsedTime, true);
@@ -646,33 +675,46 @@ public class GameScreen implements Screen {
         batch.draw(portinha2Img,   5600, 0, 800, alturaJanela-259);
 
         // Aviso AFK
+        // Aviso AFK
+        // Aviso AFK
         if (tempoAFK <= 5f && tempoAFK > 0f) {
             int seg = (int) Math.ceil(tempoAFK);
-            fonte.draw(batch, textosAFK[jogo.idioma] + seg,
-                camera.position.x - 250f, camera.position.y + 800f);
+            String mensagemAFK = textosAFK[jogo.idioma] + seg;
+
+            // 1. Aumenta a escala da fonte (pode mudar o 2.5f para o tamanho que achar melhor)
+            fonte.getData().setScale(2.5f);
+            fonte.setColor(Color.WHITE); // Garantindo a cor
+
+            // 2. Calcula o tamanho exato da frase já com a fonte aumentada
+            GlyphLayout layoutAFK = new GlyphLayout(fonte, mensagemAFK);
+
+            float textoX = camera.position.x - (layoutAFK.width / 2f);
+            float textoY = camera.position.y + 800f;
+
+            // 3. Desenha a mensagem alinhada ao centro
+            fonte.draw(batch, mensagemAFK, textoX, textoY, layoutAFK.width, Align.center, false);
+
+            // 4. Retorna a fonte pro tamanho normal para não bugar o resto do jogo
+            fonte.getData().setScale(1f);
         }
 
         if (tempoMensagemBarreira > 0 && !dialogoAtivo && !dialogoNPC3) {
 
-            fonte.setColor(Color.RED);
+            fonte.setColor(Color.WHITE);
             fonte.getData().setScale(2f);
-
 
             GlyphLayout layout = new GlyphLayout(fonte, mensagemBarreira);
 
             float textoX = camera.position.x - (layout.width / 2f);
             float textoY = camera.position.y + 800f;
 
-
+            // Desenhando a sombra preta centralizada
             fonte.setColor(Color.BLACK);
-            fonte.draw(batch, mensagemBarreira, textoX + 2f, textoY - 2f);
+            fonte.draw(batch, mensagemBarreira, textoX + 2f, textoY - 2f, layout.width, Align.center, false);
 
-
-            fonte.setColor(Color.RED);
-            fonte.draw(batch, mensagemBarreira, textoX, textoY);
-
+            // Desenhando o texto amarelo centralizado
             fonte.setColor(Color.WHITE);
-            fonte.getData().setScale(3f);
+            fonte.draw(batch, mensagemBarreira, textoX, textoY, layout.width, Align.center, false);
         }
 
         batch.end();
