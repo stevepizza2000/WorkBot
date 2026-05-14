@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 /**
  * Puzzle 1 – Sorting de itens.
@@ -100,8 +102,18 @@ public class puzzle1 implements Screen {
         this.jogo = jogo;
         batch = new SpriteBatch();
 
-        fonte = new BitmapFont();
-        fonte.getData().setScale(3f);
+        FreeTypeFontGenerator generator =
+            new FreeTypeFontGenerator(Gdx.files.internal("assets/fonts/PixelifySans-Regular.ttf"));
+
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter =
+            new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+        parameter.size = 20;
+        parameter.color = Color.WHITE;
+
+        fonte = generator.generateFont(parameter);
+
+        generator.dispose();
 
         estoqueImg   = new Texture("estoque.png");
         BarraFerroImg = new Texture("BarraFerro.png");
@@ -246,42 +258,127 @@ public class puzzle1 implements Screen {
         batch.setColor(Color.WHITE);
 
         // Tela de tutorial
+        // Tela de tutorial
+        // Tela de tutorial
         if (mostrandoTutorial) {
-            fonte.setColor(Color.WHITE);
-            fonte.getData().setScale(2.5f);
-            fonte.draw(batch, comojogar[jogo.idioma], larguraJanela / 2f - 130f, alturaJanela - 150f);
 
-            fonte.getData().setScale(2f);
-            fonte.draw(batch, setad[jogo.idioma],
-                larguraJanela / 2f - 290f, alturaJanela - 500f);
-            fonte.draw(batch, setae[jogo.idioma],
-                larguraJanela / 2f - 340f, alturaJanela - 600f);
+            GlyphLayout layout = new GlyphLayout();
 
+            // =========================
+            // TITULO
+            // =========================
             fonte.setColor(Color.YELLOW);
-            fonte.getData().setScale(2f);
-            fonte.draw(batch, pressione[jogo.idioma],
-                larguraJanela / 2f - 360f, alturaJanela - 700f);
+            fonte.getData().setScale(3f);
+
+            layout.setText(fonte, comojogar[jogo.idioma]);
+
+            fonte.draw(
+                batch,
+                comojogar[jogo.idioma],
+                (larguraJanela - layout.width) / 2f,
+                alturaJanela - 150f
+            );
+
+            // =========================
+            // TEXTO DIREITA
+            // =========================
+            fonte.setColor(Color.WHITE);
+            fonte.getData().setScale(1.8f);
+
+            layout.setText(fonte, setad[jogo.idioma]);
+
+            fonte.draw(
+                batch,
+                setad[jogo.idioma],
+                (larguraJanela - layout.width) / 2f,
+                alturaJanela - 500f
+            );
+
+            // =========================
+            // TEXTO ESQUERDA
+            // =========================
+            layout.setText(fonte, setae[jogo.idioma]);
+
+            fonte.draw(
+                batch,
+                setae[jogo.idioma],
+                (larguraJanela - layout.width) / 2f,
+                alturaJanela - 600f
+            );
+
+            // =========================
+            // TEXTO INICIAR
+            // =========================
+            fonte.setColor(Color.YELLOW);
+            fonte.getData().setScale(1.8f);
+
+            layout.setText(fonte, pressione[jogo.idioma]);
+
+            fonte.draw(
+                batch,
+                pressione[jogo.idioma],
+                (larguraJanela - layout.width) / 2f,
+                alturaJanela - 720f
+            );
 
             fonte.setColor(Color.WHITE);
-            fonte.getData().setScale(3f);
         }
         // HUD do jogo
         else {
+
+            GlyphLayout layout = new GlyphLayout();
+
+            // =========================
+            // ACERTOS
+            // =========================
             if (!puzzleFinalizado) {
-                fonte.setColor(Color.YELLOW);
-                fonte.draw(batch, acertos[jogo.idioma] + itensCertos + " / 4", 50f, alturaJanela - 50f);
+
+                fonte.setColor(Color.WHITE);
+                fonte.getData().setScale(2.5f);
+
+                fonte.draw(
+                    batch,
+                    acertos[jogo.idioma] + itensCertos + " / 4",
+                    50f,
+                    alturaJanela - 50f
+                );
             }
 
-            //quando o jogo finalizar
+            // =========================
+            // PUZZLE FINALIZADO
+            // =========================
             if (puzzleFinalizado) {
+
+                // MISSAO CUMPRIDA
                 fonte.setColor(Color.GREEN);
-                fonte.draw(batch, missao[jogo.idioma], larguraJanela / 2f - 170f, alturaJanela - 100f);
+                fonte.getData().setScale(3f);
+
+                layout.setText(fonte, missao[jogo.idioma]);
+
+                fonte.draw(
+                    batch,
+                    missao[jogo.idioma],
+                    (larguraJanela - layout.width) / 2f,
+                    alturaJanela - 100f
+                );
+
+                // TEXTO DO FERRO
+                fonte.setColor(Color.WHITE);
                 fonte.getData().setScale(2f);
-                fonte.draw(batch, ferro[jogo.idioma], larguraJanela / 2f - 180f, alturaJanela - 200f);
 
-                fonte.getData().setScale(4f);
+                layout.setText(fonte, ferro[jogo.idioma]);
 
-                // DESENHA A BARRA CAINDO
+                fonte.draw(
+                    batch,
+                    ferro[jogo.idioma],
+                    (larguraJanela - layout.width) / 2f,
+                    alturaJanela - 200f
+                );
+
+                // RESET DA ESCALA
+                fonte.getData().setScale(1f);
+
+                // BARRA CAINDO
                 batch.draw(BarraFerroImg, barraX, barraY, 100f, 64f);
             }
         }
