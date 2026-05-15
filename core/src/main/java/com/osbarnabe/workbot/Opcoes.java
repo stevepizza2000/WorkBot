@@ -7,12 +7,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 public class Opcoes implements Screen {
 
     private Main jogo;
     private SpriteBatch batch;
-    private BitmapFont font;
+    private BitmapFont fonteAFK;
 
     private float tempoAFK = 10f;
     private final float limiteAFK = 0f;
@@ -41,8 +44,18 @@ public class Opcoes implements Screen {
         this.jogo = jogo;
         batch = new SpriteBatch();
 
-        font = new BitmapFont();
-        font.getData().setScale(4f);
+        FreeTypeFontGenerator generator =
+            new FreeTypeFontGenerator(Gdx.files.internal("assets/fonts/PixelifySans-Regular.ttf"));
+
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter =
+            new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+        parameter.size = 32;
+        parameter.color = Color.WHITE;
+
+        fonteAFK = generator.generateFont(parameter);
+
+        generator.dispose();
 
         atualizarTexturasIdioma(); // 🔥 importante
     }
@@ -129,10 +142,18 @@ public class Opcoes implements Screen {
         // 🔥 AFK traduzido
         if (tempoAFK <= 5f && tempoAFK > 0f) {
             int seg = (int) Math.ceil(tempoAFK);
-            font.draw(batch,
-                textosAFK[jogo.idioma] + seg,
-                larguraJanela/2 - 300,
-                alturaJanela - 80);
+            fonteAFK.getData().setScale(2f);
+
+            String textoAFK = textosAFK[jogo.idioma] + seg;
+
+            GlyphLayout layout = new GlyphLayout(fonteAFK, textoAFK);
+
+            fonteAFK.draw(
+                batch,
+                textoAFK,
+                (larguraJanela - layout.width) / 2f,
+                alturaJanela - 80
+            );
         }
 
         batch.end();
@@ -202,7 +223,7 @@ public class Opcoes implements Screen {
     @Override
     public void dispose() {
         batch.dispose();
-        font.dispose();
+        fonteAFK.dispose();
 
         if (btnVoltar != null) {
             btnVoltar.dispose(); btnVoltarSelect.dispose();

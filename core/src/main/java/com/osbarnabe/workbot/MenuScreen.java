@@ -7,14 +7,16 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 public class MenuScreen implements Screen {
 
     private Main jogo;
     private SpriteBatch batch;
-    private BitmapFont fontAviso;
-    private BitmapFont fontAFK;
+    private BitmapFont fonteAFK;
 
     private float tempoAFK = 10f;
     private final float limiteAFK = 0f;
@@ -46,12 +48,18 @@ public class MenuScreen implements Screen {
         this.jogo = jogo;
         batch = new SpriteBatch();
 
-        fontAviso = new BitmapFont();
-        fontAviso.getData().setScale(4f);
+        FreeTypeFontGenerator generator =
+            new FreeTypeFontGenerator(Gdx.files.internal("assets/fonts/PixelifySans-Regular.ttf"));
 
-        fontAFK = new BitmapFont();
-        fontAFK.getData().setScale(2f);
-        fontAFK.setColor(Color.RED);
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter =
+            new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+        parameter.size = 32;
+        parameter.color = Color.WHITE;
+
+        fonteAFK = generator.generateFont(parameter);
+
+        generator.dispose();
 
         fundo = new Texture("fundo.png");
 
@@ -125,10 +133,18 @@ public class MenuScreen implements Screen {
         // 🔥 AFK traduzido
         if (tempoAFK <= 5f && tempoAFK > 0f) {
             int seg = (int) Math.ceil(tempoAFK);
-            fontAviso.draw(batch,
-                textosAFK[jogo.idioma] + seg,
-                larguraJanela/2 - 300,
-                alturaJanela - 80);
+            fonteAFK.getData().setScale(2f);
+
+            String textoAFK = textosAFK[jogo.idioma] + seg;
+
+            GlyphLayout layout = new GlyphLayout(fonteAFK, textoAFK);
+
+            fonteAFK.draw(
+                batch,
+                textoAFK,
+                (larguraJanela - layout.width) / 2f,
+                alturaJanela - 80
+            );
         }
 
         batch.end();
@@ -181,8 +197,7 @@ public class MenuScreen implements Screen {
     @Override
     public void dispose() {
         batch.dispose();
-        fontAviso.dispose();
-        fontAFK.dispose();
+        fonteAFK.dispose();
         fundo.dispose();
 
         if (btnInicio != null) {
