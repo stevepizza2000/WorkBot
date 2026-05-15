@@ -342,11 +342,15 @@ public class GameScreen implements Screen {
 
                     if (!dialogoAtivo) {
 
-                        if (
-                            !jogo.npc1Completo ||
-                                (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou) ||
-                                (jogo.npc1PosPuzzleFalou && !jogo.npc1Fase2Falou)
-                        ) {
+                        // ANTES DO PUZZLE
+                        if (!jogo.puzzle1Completo) {
+
+                            dialogoAtivo = true;
+                            tempoAFK = tempoMaxAFK;
+                        }
+
+                        // DEPOIS DO PUZZLE → SEM LIMITE
+                        else if (jogo.puzzle1Completo) {
 
                             dialogoAtivo = true;
                             tempoAFK = tempoMaxAFK;
@@ -360,27 +364,27 @@ public class GameScreen implements Screen {
 
                         dialogoNPC3 = false;
 
-                        // PRIMEIRA VEZ
-                        if (!jogo.npc3Falou) {
+                        // PRIMEIRA FALA
+                        if (!jogo.puzzle2Completo) {
                             jogo.npc3Falou = true;
                         }
 
-                        // PÓS-PUZZLE (AGORA PODE REPETIR)
-                        else if (jogo.puzzle2Completo) {
+                        // PÓS PUZZLE
+                        else {
                             jogo.npc3PosPuzzleFalou = true;
-                            // ❌ NÃO zera mais:
-                            // jogo.puzzle2Completo = false;
                         }
 
                     } else {
 
-                        // PRIMEIRA INTERAÇÃO
-                        if (!jogo.npc3Falou) {
+                        // BALÃO 1 INFINITO
+                        if (!jogo.puzzle2Completo) {
+
                             dialogoNPC3 = true;
                         }
 
-                        // DEPOIS DO PUZZLE → SEM LIMITE
-                        else if (jogo.puzzle2Completo) {
+                        // BALÃO 2 INFINITO
+                        else {
+
                             dialogoNPC3 = true;
                         }
                     }
@@ -597,14 +601,21 @@ public class GameScreen implements Screen {
 
             TextureRegion frame;
 
-            // PRIMEIRO DIÁLOGO
-            if (!jogo.npc1Completo) {
+            // PRIMEIRO BALÃO
+            if (!jogo.puzzle1Completo) {
+
                 frame = animacaoBalao.getKeyFrame(elapsedTime, true);
+            }
 
-            } else if (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou) {
+// SEGUNDO BALÃO
+            else if (jogo.puzzle1Completo && !jogo.npc1PosPuzzleFalou) {
+
                 frame = animacaoBalao2.getKeyFrame(elapsedTime, true);
+            }
 
-            } else {
+// TERCEIRO BALÃO
+            else {
+
                 frame = animacaoBalao2.getKeyFrame(elapsedTime, true);
             }
 
@@ -621,7 +632,7 @@ public class GameScreen implements Screen {
 
             TextureRegion frame;
 
-            if (!jogo.npc3Falou) {
+            if (!jogo.puzzle2Completo) {
                 frame = animacaoBalaoNPC3.getKeyFrame(elapsedTime, true);
             } else {
                 frame = animacaoBalaoNPC3_2.getKeyFrame(elapsedTime, true);
