@@ -631,9 +631,9 @@ public class GameScreen implements Screen {
         }
 
         // Placas do tutorial (ficam fixas no início)
-        batch.draw(placaD, 80,  190, 320, 320);
-        batch.draw(placaE, 420, 190, 320, 320);
-        batch.draw(placaI, 760, 190, 320, 320);
+        batch.draw(placaD, 100,  190, 120, 120);
+        batch.draw(placaE, 320, 190, 120, 120);
+        batch.draw(placaI, 540, 190, 120, 120);
 
         // Robô
         TextureRegion frame;
