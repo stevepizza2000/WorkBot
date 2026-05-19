@@ -122,13 +122,13 @@ public class MenuScreen implements Screen {
 
         // Botões
         batch.draw(opcaoSelecionada == 0 ? btnInicioSelect : btnInicio,
-            larguraJanela/2 - 180, 600, 400, 200);
+            larguraJanela/2 - 180, 530, 400, 200);
 
         batch.draw(opcaoSelecionada == 1 ? btnCreditosSelect : btnCreditos,
-            larguraJanela/2 - 180, 350, 400, 200);
+            larguraJanela/2 - 180, 280, 400, 200);
 
         batch.draw(opcaoSelecionada == 2 ? btnOpcaoSelect : btnOpcao,
-            larguraJanela/2 - 180, 100, 400, 200);
+            larguraJanela/2 - 180, 30, 400, 200);
 
         // 🔥 AFK traduzido
         if (tempoAFK <= 5f && tempoAFK > 0f) {
