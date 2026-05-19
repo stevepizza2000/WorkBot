@@ -481,7 +481,7 @@ public class GameScreen implements Screen {
         batch.begin();
 
         // Cenário
-        batch.draw(tutorialImg,    0,    0, 800, alturaJanela - 259);
+        batch.draw(tutorialImg,    0,    0, 800, alturaJanela - 259); //inicio
         batch.draw(ceu2Img,        0,    alturaJanela - 259, 800, 259);
         batch.draw(inicioImg,      800,  0, 800, alturaJanela - 259);
         batch.draw(ceu1Img,        800,  alturaJanela - 259, 800, 259);
