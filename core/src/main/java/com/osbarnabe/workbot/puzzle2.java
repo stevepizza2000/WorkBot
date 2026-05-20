@@ -203,7 +203,7 @@ public class puzzle2 implements Screen {
         }
 
 
-        bird.set(80f, birdY, 65f, 50f); // X e tamanho iguais ao desenho
+        bird.set(80f, birdY, 90f, 50f); // X e tamanho iguais ao desenho
 
 
         for (Cano c : canos) {
@@ -212,16 +212,16 @@ public class puzzle2 implements Screen {
             float topY         = c.gapY + gap / 2f;
 
             pipeBottom.set(
-                c.x + margem,
+                c.x,
                 0f,
-                pipeWidth - margem * 2f,
+                pipeWidth,
                 bottomHeight
             );
 
             pipeTop.set(
-                c.x + margem,
+                c.x,
                 topY,
-                pipeWidth - margem * 2f,
+                pipeWidth,
                 HEIGHT - topY
             );
 
@@ -348,7 +348,7 @@ public class puzzle2 implements Screen {
 
         batch.draw(texBackground, 0, 0, WIDTH, HEIGHT);
 
-        batch.draw(texBird, 80f, birdY, 75f, 50f);
+        batch.draw(texBird, 80f, birdY, 100f, 50f);
 
 
         float alturaCano = 300f;
@@ -377,23 +377,54 @@ public class puzzle2 implements Screen {
 
             // 🔥 DESENHO DA FACA COM TODAS AS ANIMAÇÕES UNIFICADAS (Da sua branch atual)
             if (c.temFaca && !pegouFaca) {
-                // 1. Cálculos de Animação
+
                 float flutuarY = MathUtils.sin(tempoAnimacao * 4f) * 8f;
                 float escala = 1f + MathUtils.sin(tempoAnimacao * 2f) * 0.1f;
                 float rotacaO = MathUtils.sin(tempoAnimacao * 2f) * 10f;
 
                 float largAnimada = facaLargura * escala;
                 float altAnimada = facaAltura * escala;
+
                 float facaX = c.x + (pipeWidth / 2f) - (largAnimada / 2f);
                 float facaY = c.gapY - (altAnimada / 2f) + flutuarY;
 
-                // 2. Desenhar o Brilho (Atrás)
-                float brilhoAlpha = 0.3f + MathUtils.sin(tempoAnimacao * 5f) * 0.2f;
-                batch.setColor(1, 1, 0, brilhoAlpha); // Amarelo neon
-                batch.draw(texFaca, facaX - 2, facaY - 2, largAnimada + 4, altAnimada + 4);
+                // ===== AURA BRANCA =====
+                // ===== GLOW SUAVE =====
+                float pulse = MathUtils.sin(tempoAnimacao * 3f);
 
-                // 3. Desenhar a Faca Principal (Com rotação e escala)
-                batch.setColor(1, 1, 1, 1); // Resetar cor para branco total
+                batch.setColor(1f, 1f, 1f, 0.10f + pulse * 0.02f);
+
+                batch.draw(
+                    texFaca,
+                    facaX - 18f,
+                    facaY - 18f,
+                    largAnimada + 36f,
+                    altAnimada + 36f
+                );
+
+                batch.setColor(1f, 1f, 1f, 0.16f + pulse * 0.03f);
+
+                batch.draw(
+                    texFaca,
+                    facaX - 10f,
+                    facaY - 10f,
+                    largAnimada + 20f,
+                    altAnimada + 20f
+                );
+
+                batch.setColor(1f, 1f, 1f, 0.25f + pulse * 0.04f);
+
+                batch.draw(
+                    texFaca,
+                    facaX - 4f,
+                    facaY - 4f,
+                    largAnimada + 8f,
+                    altAnimada + 8f
+                );
+
+                batch.setColor(1f, 1f, 1f, 1f);
+
+                // ===== FACA =====
                 batch.draw(texFaca,
                     facaX, facaY,
                     largAnimada / 2f, altAnimada / 2f,
@@ -410,10 +441,21 @@ public class puzzle2 implements Screen {
         float alturaBase = HEIGHT - 10f;
 
         // Se o jogo for até 6 pontos (como estava na branch puzzle1), basta trocar o 5 por 6 abaixo!
-        if (score < 6) {
-            font.draw(batch, pontos[jogo.idioma] + score + "/5", margemX, alturaBase);
-        } else {
-            font.draw(batch, pegarKit[jogo.idioma], margemX, alturaBase);
+        // CONTADOR
+        font.draw(batch,
+            pontos[jogo.idioma] + score + "/5",
+            margemX,
+            alturaBase
+        );
+
+// MENSAGEM DA FACA
+        if (score >= 5) {
+
+            font.draw(batch,
+                pegarKit[jogo.idioma],
+                margemX,
+                alturaBase - 28f
+            );
         }
 
         // Transição de saída (Fade Out)
