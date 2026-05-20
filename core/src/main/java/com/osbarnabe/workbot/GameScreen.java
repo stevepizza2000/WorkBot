@@ -55,7 +55,8 @@ public class GameScreen implements Screen {
     private Texture fabrica1Img, fabrica2Img, finalImg;
     private Texture ceitImg, ceu1Img, ceu2Img, localFinalImg, portinha2Img;
     private Texture trabalhadorImg, trabalhador2Img, trabalhador3Img;
-    private Texture inicioImg, portinhaImg, tutorialImg, placaE, placaD, placaI;
+    private Texture inicioImg, portinhaImg, tutorialImg;
+    private Texture placaD, placaDTutorial, placaI, placaITutorial, placaE, placaETutorial;
     private Texture localportaImg, localporta2Img, localporta3Img;
     private Texture portaImg;
     private Texture pontoImg;
@@ -116,6 +117,10 @@ public class GameScreen implements Screen {
 
     private Texture balaoNPC3_2;
     private Animation<TextureRegion> animacaoBalaoNPC3_2;
+
+    // --- CONTROLE DAS PLACAS DO TUTORIAL ---
+    private boolean passouPlacaI = false;
+    private boolean mostrandoPlacaI = false;
 
     ////DEBUG
     private boolean debugSemBarreira = false;
@@ -186,6 +191,10 @@ public class GameScreen implements Screen {
         placaD         = jogo.assets.get("placaRight" + sufixo + ".png", Texture.class);
         placaE         = jogo.assets.get("placaLeft" + sufixo + ".png", Texture.class);
         placaI         = jogo.assets.get("placaInteragir"+sufixo+".png", Texture.class);
+
+        placaDTutorial = jogo.assets.get("placaRightTutorial" + sufixo + ".png", Texture.class);
+        placaETutorial = jogo.assets.get("placaLeftTutorial" + sufixo + ".png", Texture.class);
+        placaITutorial = jogo.assets.get("placaInteragirTutorial" + sufixo + ".png", Texture.class);
 
         balaoNPC1 = jogo.assets.get("BalaoFala_NPC1" + sufixo + ".png", Texture.class);
         balaoNPC3 = jogo.assets.get("BalaoFala_NPC3" + sufixo + ".png", Texture.class);
@@ -304,18 +313,33 @@ public class GameScreen implements Screen {
         boolean dir = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 
         elapsedTime += delta;
+        float centroRobo = roboX + (tamanhoRobo / 2f);
 
         if (tempoMensagemBarreira > 0) {
             tempoMensagemBarreira -= delta;
         }
 
-        // Interação NPCs
+        // --- LÓGICA DO POP-UP DA PLACA DE INTERAÇÃO (Trava o robô) ---
+        // Se passar pelo X entre 540 e 660 e ainda não tiver interagido
+        if (centroRobo >= 590f && centroRobo <= 710f && !passouPlacaI) {
+            mostrandoPlacaI = true;
+        } else {
+            // Caso ele saia de perto da placa (apenas por garantia)
+            mostrandoPlacaI = false;
+        }
+
+        // Interação NPCs e Placa
         if (esq && dir) {
             tempoAFK = 10f;
 
             if (podeInteragir) {
 
-                if (dialogoAtivo) {
+                // Destrava a placa de interação!
+                if (mostrandoPlacaI) {
+                    passouPlacaI = true;
+                    mostrandoPlacaI = false;
+                }
+                else if (dialogoAtivo) {
 
                     dialogoAtivo = false;
 
@@ -383,7 +407,8 @@ public class GameScreen implements Screen {
             podeInteragir = true;
         }
 
-        if (dialogoAtivo || dialogoNPC3) {
+        // 🛑 CONGELA O MOVIMENTO SE UM DIÁLOGO OU A PLACA DE INTERAÇÃO ESTIVER ATIVA
+        if (dialogoAtivo || dialogoNPC3 || mostrandoPlacaI) {
             mensagemBarreira = "";
             tempoMensagemBarreira = 0f;
             esq = false;
@@ -391,13 +416,12 @@ public class GameScreen implements Screen {
             tempoAFK = tempoMaxAFK;
         }
 
-        // Interação (esq + dir juntos)
+        // Interação com portas (esq + dir juntos, garantindo que não estamos presos)
         if (esq && dir) {
             tempoAFK = 10f;
             if (!processouBotao) {
                 if (colideComPorta(porta1)) porta1.interagir();
                 else if (colideComPorta(porta2)) porta2.interagir();
-                else System.out.println("Nenhuma porta por perto.");
                 processouBotao = true;
             }
         } else if (esq || dir) {
@@ -632,10 +656,36 @@ public class GameScreen implements Screen {
                 5555, 470, 150, 150);
         }
 
-        // Placas do tutorial (ficam fixas no início)
-        batch.draw(placaD, 100,  190, 120, 120);
+        // Placas do tutorial (ficam fixas no chão)
+        batch.draw(placaD, 100, 190, 120, 120);
         batch.draw(placaE, 320, 190, 120, 120);
         batch.draw(placaI, 540, 190, 120, 120);
+
+        // --- POP-UPS DAS PLACAS DO TUTORIAL (IMAGENS MAIORES) ---
+        float popupLargura = 470;
+        float popupAltura = 380;
+        float popupX = camera.position.x - (popupLargura / 2f);
+        float popupY = camera.position.y + 300f; // Exibido no alto da tela
+
+        // Se passar por cima da placa D (Direita)
+        if (centroRobo >= 100f && centroRobo <= 220f) {
+            batch.draw(placaDTutorial, popupX, popupY, popupLargura, popupAltura);
+        }
+        // Se passar por cima da placa E (Esquerda)
+        else if (centroRobo >= 320f && centroRobo <= 440f) {
+            batch.draw(placaETutorial, popupX, popupY, popupLargura, popupAltura);
+        }
+
+        // Se estiver bloqueado na placa I (Interação)
+        if (mostrandoPlacaI) {
+            batch.draw(placaITutorial, popupX, popupY, popupLargura, popupAltura);
+
+            // Desenha o botão de interação por cima do Pop-up da Placa I para ensinar o jogador a apertar!
+            TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
+            float btnLargura = frameBotao.getRegionWidth() * 0.7f;
+            float btnAltura  = frameBotao.getRegionHeight() * 0.7f;
+            batch.draw(frameBotao, camera.position.x - (btnLargura / 2f), popupY - btnAltura - 20f, btnLargura, btnAltura);
+        }
 
         // Robô
         TextureRegion frame;
@@ -673,7 +723,7 @@ public class GameScreen implements Screen {
             fonte.getData().setScale(1f);
         }
 
-        if (tempoMensagemBarreira > 0 && !dialogoAtivo && !dialogoNPC3) {
+        if (tempoMensagemBarreira > 0 && !dialogoAtivo && !dialogoNPC3 && !mostrandoPlacaI) {
 
             fonte.setColor(Color.WHITE);
             fonte.getData().setScale(2f);

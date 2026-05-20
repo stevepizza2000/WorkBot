@@ -54,6 +54,10 @@ public class LoadingScreen implements Screen {
         jogo.assets.load("placaLeft" + sufixo + ".png",         Texture.class);
         jogo.assets.load("placaRight" + sufixo + ".png",         Texture.class);
 
+        jogo.assets.load("placaInteragirTutorial"+sufixo+".png", Texture.class);
+        jogo.assets.load("placaLeftTutorial"+sufixo+".png", Texture.class);
+        jogo.assets.load("placaRightTutorial"+sufixo+".png", Texture.class);
+
         jogo.assets.load("tutorial.png", Texture.class);
         jogo.assets.load("inicio.png",       Texture.class);
         jogo.assets.load("portinha.png",     Texture.class);
