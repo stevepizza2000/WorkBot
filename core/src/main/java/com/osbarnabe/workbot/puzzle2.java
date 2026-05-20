@@ -325,7 +325,7 @@ public class puzzle2 implements Screen {
                 jogo.npc3PosPuzzleFalou = false;
 
                 jogo.setScreen(
-                    new GameScreen(jogo, 5020f, 65f)
+                    new GameScreen(jogo, 5820f, 65f)
                 );
             }
         }
