@@ -25,6 +25,8 @@ public class CreditsScreen implements Screen {
     private Texture btnVoltar;
     private Texture btnVoltarSelect;
 
+    private Texture estereggDipp, estereggCosta, estereggBiondo;
+
     private boolean botaoSelecionado = false;
 
     private float rolagemY = -200f;
@@ -73,6 +75,10 @@ public class CreditsScreen implements Screen {
         this.jogo = jogo;
 
         batch = new SpriteBatch();
+
+        estereggDipp = new Texture("dipp.png");
+        estereggCosta = new Texture("costa.png");
+        estereggBiondo = new Texture("biondo.png");
 
         camera = new OrthographicCamera();
         viewport = new FitViewport(largura, altura, camera);
@@ -257,6 +263,30 @@ public class CreditsScreen implements Screen {
             150f
         );
 
+        batch.draw(
+            estereggDipp,
+            0, // Centraliza uma imagem de largura 100
+            espacamentoY - 1680f,  // Posiciona abaixo do botão acompanhando a rolagem
+            100f,
+            100f
+        );
+
+        batch.draw(
+            estereggCosta,
+            100, // Centraliza uma imagem de largura 100
+            espacamentoY - 1680f,  // Posiciona abaixo do botão acompanhando a rolagem
+            100f,
+            100f
+        );
+
+        batch.draw(
+            estereggBiondo,
+            200, // Centraliza uma imagem de largura 100
+            espacamentoY - 1680f,  // Posiciona abaixo do botão acompanhando a rolagem
+            100f,
+            100f
+        );
+
         batch.end();
     }
 
@@ -306,5 +336,9 @@ public class CreditsScreen implements Screen {
 
         btnVoltar.dispose();
         btnVoltarSelect.dispose();
+
+        estereggDipp.dispose();
+        estereggCosta.dispose();
+        estereggBiondo.dispose();
     }
 }
