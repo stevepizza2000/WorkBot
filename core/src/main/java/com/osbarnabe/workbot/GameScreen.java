@@ -181,9 +181,11 @@ public class GameScreen implements Screen {
         localFinalImg  = jogo.assets.get("localFinal.png", Texture.class);
         portinha2Img   = jogo.assets.get("portinha2.png", Texture.class);
         tutorialImg    = jogo.assets.get("tutorial.png", Texture.class);
-        placaD         = jogo.assets.get("placaRight.png", Texture.class);
-        placaE         = jogo.assets.get("placaLeft.png", Texture.class);
-        placaI         = jogo.assets.get("placaInteragir.png", Texture.class);
+
+        //placas
+        placaD         = jogo.assets.get("placaRight" + sufixo + ".png", Texture.class);
+        placaE         = jogo.assets.get("placaLeft" + sufixo + ".png", Texture.class);
+        placaI         = jogo.assets.get("placaInteragir"+sufixo+".png", Texture.class);
 
         balaoNPC1 = jogo.assets.get("BalaoFala_NPC1" + sufixo + ".png", Texture.class);
         balaoNPC3 = jogo.assets.get("BalaoFala_NPC3" + sufixo + ".png", Texture.class);
@@ -631,9 +633,9 @@ public class GameScreen implements Screen {
         }
 
         // Placas do tutorial (ficam fixas no início)
-        batch.draw(placaD, 80,  190, 320, 320);
-        batch.draw(placaE, 420, 190, 320, 320);
-        batch.draw(placaI, 760, 190, 320, 320);
+        batch.draw(placaD, 100,  190, 120, 120);
+        batch.draw(placaE, 320, 190, 120, 120);
+        batch.draw(placaI, 540, 190, 120, 120);
 
         // Robô
         TextureRegion frame;
