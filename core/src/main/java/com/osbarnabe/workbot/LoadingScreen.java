@@ -42,10 +42,10 @@ public class LoadingScreen implements Screen {
         jogo.assets.load("roboParado.png",   Texture.class);
         jogo.assets.load("roboDir.png",      Texture.class);
         jogo.assets.load("roboEsq.png",      Texture.class);
-        jogo.assets.load("fabrica1.png",     Texture.class);
-        jogo.assets.load("fabrica2.png",     Texture.class);
-        jogo.assets.load("Fabrica3sprite.png",     Texture.class);
-        jogo.assets.load("ceit.png",         Texture.class);
+        jogo.assets.load("fabrica1_sprite.png", Texture.class);
+        jogo.assets.load("fabrica2_sprite.png",     Texture.class);
+        jogo.assets.load("fabrica3_sprite.png",     Texture.class);
+        jogo.assets.load("ceit_sprite.png",         Texture.class);
         jogo.assets.load("ceu1.png",         Texture.class);
         jogo.assets.load("ceu2.png",         Texture.class);
 
@@ -55,21 +55,22 @@ public class LoadingScreen implements Screen {
         jogo.assets.load("placaRight" + sufixo + ".png",         Texture.class);
 
         jogo.assets.load("tutorial.png", Texture.class);
-        jogo.assets.load("inicio.png",       Texture.class);
+        jogo.assets.load("inicio_sprite.png", Texture.class);
         jogo.assets.load("portinha.png",     Texture.class);
-        jogo.assets.load("localporta.png",   Texture.class);
-        jogo.assets.load("localporta2.png",  Texture.class);
-        jogo.assets.load("localporta3.png",  Texture.class);
+        jogo.assets.load("localporta_sprite.png", Texture.class);
+        jogo.assets.load("localporta2_sprite.png", Texture.class);
+        jogo.assets.load("localporta3_sprite.png", Texture.class);
         jogo.assets.load("trabalhador.png",  Texture.class);
         jogo.assets.load("trabalhador2.png", Texture.class);
         jogo.assets.load("trabalhador3.png", Texture.class);
         jogo.assets.load("porta.png",        Texture.class);
         jogo.assets.load("ponto.png",        Texture.class);
         jogo.assets.load("trabalhador1flnd.png", Texture.class);
-        jogo.assets.load("localFinal.png", Texture.class);
+        jogo.assets.load("localFinal_sprite.png", Texture.class);
         jogo.assets.load("portinha2.png", Texture.class);
         jogo.assets.load("botaoInt.png", Texture.class);
         jogo.assets.load("final.png", Texture.class);
+        jogo.assets.load("localFinal.png", Texture.class);
 
         // --- CARREGANDO OS BALÕES DE ACORDO COM O IDIOMA ---
         jogo.assets.load("BalaoFala_NPC1" + sufixo + ".png", Texture.class);
