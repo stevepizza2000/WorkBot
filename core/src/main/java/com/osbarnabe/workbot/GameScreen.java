@@ -129,6 +129,17 @@ public class GameScreen implements Screen {
 
     private boolean velocidadeRapida = false;
 
+    private boolean dialogoNPC2 = false;
+    private float npc2X = 3270f; // Posição X de exemplo (coloque onde o trabalhador 2 está)
+    private float npc2Y = 210f;  // Posição Y (perto dos 210px que você usou no batch.draw do trabalhador 2)
+
+    private Texture balaoNPC2;
+    private Animation<TextureRegion> animacaoBalaoNPC2;
+
+    private Texture procuradoImg;          // Armazena a imagem do cartaz
+    private boolean npc2LiberouArvore = false; // Indica se já falou com o NPC 2
+    private boolean exibirProcurado = false;   // Controla se o cartaz está visível na tela
+
     public GameScreen(Main jogo) {
         this(jogo, 100f, 65f);
     }
@@ -190,6 +201,8 @@ public class GameScreen implements Screen {
         balaoNPC3 = jogo.assets.get("BalaoFala_NPC3" + sufixo + ".png", Texture.class);
         balaoNPC1_2 = jogo.assets.get("BalaoFala_NPC1_2" + sufixo + ".png", Texture.class);
         balaoNPC3_2 = jogo.assets.get("BalaoFala_NPC3_2" + sufixo + ".png", Texture.class);
+        balaoNPC2 = jogo.assets.get("BalaoFala_NPC2" + sufixo + ".png", Texture.class);
+        procuradoImg = jogo.assets.get("Procurado" + sufixo + ".png", Texture.class);
 
         finalImg = jogo.assets.get("final.png", Texture.class);
 
@@ -252,6 +265,15 @@ public class GameScreen implements Screen {
             )
         );
 
+        animacaoBalaoNPC2 = new Animation<>(0.4f,
+            extrairFrames(
+                balaoNPC2,
+                balaoNPC2.getWidth(),       // largura inteira
+                balaoNPC2.getHeight() / 2,  // dividido verticalmente por 2 frames
+                2
+            )
+        );
+
         roboX = inicioX;
         roboY = inicioY;
 
@@ -262,8 +284,12 @@ public class GameScreen implements Screen {
     }
 
     private boolean pertoDoNPC(float npcX, float offsetX) {
+        // Pega o centro real do robô (X atual + metade da sua largura)
         float centroRobo = roboX + (tamanhoRobo / 2f);
-        float centroNPC = npcX + offsetX;
+
+        // Pega o centro real do NPC somando a metade da largura padrão de um trabalhador (260f / 2f = 130f)
+        // O offsetX serve para ajustes manuais específicos de cada um
+        float centroNPC = npcX + 130f + offsetX;
 
         return Math.abs(centroRobo - centroNPC) < raioInteracao;
     }
@@ -358,6 +384,26 @@ public class GameScreen implements Screen {
                     }
                 }
 
+                else if (pertoDoNPC(npc2X, 0f)) {
+                    if (dialogoNPC2) {
+                        dialogoNPC2 = false;
+                        npc2LiberouArvore = true; // Libera a árvore quando o diálogo fecha
+                    } else {
+                        dialogoNPC2 = true;
+                        tempoAFK = tempoMaxAFK;
+                    }
+                }
+
+// Interação com a árvore (só funciona se já falou com o NPC 2)
+                else if (npc2LiberouArvore && pertoDoNPC(0f, -30f)) {
+                    if (exibirProcurado) {
+                        exibirProcurado = false; // Fecha o cartaz
+                    } else {
+                        exibirProcurado = true;  // Abre o cartaz
+                        tempoAFK = tempoMaxAFK;
+                    }
+                }
+
                 else if (pertoDoNPC(npc3X, 400f)) {
 
                     if (dialogoNPC3) {
@@ -399,11 +445,9 @@ public class GameScreen implements Screen {
             podeInteragir = true;
         }
 
-        if (dialogoAtivo || dialogoNPC3) {
-
+        if (dialogoAtivo || dialogoNPC2 || dialogoNPC3 || exibirProcurado) { // <--- Adicionado aqui
             mensagemBarreira = "";
             tempoMensagemBarreira = 0f;
-
             esq = false;
             dir = false;
             tempoAFK = tempoMaxAFK;
@@ -647,6 +691,42 @@ public class GameScreen implements Screen {
             batch.draw(frame, x, y, larguraBalao, alturaBalao);
         }
 
+        if (dialogoNPC2) {
+            TextureRegion frame = animacaoBalaoNPC2.getKeyFrame(elapsedTime, true);
+
+            float larguraBalao = 800f;
+            float alturaBalao = 400f;
+
+            // Segue o mesmo padrão de centralizar na câmara que já usas
+            float x = camera.position.x - larguraBalao / 2f;
+            float y = camera.position.y + (alturaJanela / 2f) - alturaBalao - 50f;
+
+            batch.draw(frame, x, y, larguraBalao, alturaBalao);
+        }
+
+        if (npc2LiberouArvore && pertoDoNPC(0f, 0f)) {
+            TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
+
+            float escala = 0.45f;
+            float largura = frameBotao.getRegionWidth() * escala;
+            float altura  = frameBotao.getRegionHeight() * escala;
+
+            // Posiciona o botão centralizado no início do mapa (perto da árvore) e flutuando
+            float x = 100f - (largura / 2f);
+            float y = 400f;
+
+            batch.draw(frameBotao, x, y, largura, altura);
+        }
+
+        if (exibirProcurado) {
+            float larguraProcurado = 700f;
+            float alturaProcurado  = 700f;
+
+            float xProcurado = camera.position.x - (larguraProcurado / 2f);
+            float yProcurado = camera.position.y - (alturaProcurado / 2f);
+
+            batch.draw(procuradoImg, xProcurado, yProcurado, larguraProcurado, alturaProcurado);
+        }
         // BOTÃO DE INTERAÇÃO NPC3
         if (pertoDoNPC(npc3X, 400f)) {
 
@@ -727,6 +807,8 @@ public class GameScreen implements Screen {
             fonte.setColor(Color.WHITE);
             fonte.draw(batch, mensagemBarreira, textoX, textoY, layout.width, Align.center, false);
         }
+
+
 
         batch.end();
     }
