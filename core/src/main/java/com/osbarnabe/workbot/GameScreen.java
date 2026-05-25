@@ -87,6 +87,7 @@ public class GameScreen implements Screen {
     private boolean roboEntrando = false;
     private float tempoEntrando = 0f;
 
+
     private Texture fabrica2SpriteImg;
     private Animation<TextureRegion> animacaoFabrica2;
 
@@ -475,6 +476,16 @@ public class GameScreen implements Screen {
 
         elapsedTime += delta;
 
+// --- CONTROLE DO TEMPO DA ANIMAÇÃO DE ENTRADA ---
+        if (roboEntrando) {
+            tempoEntrando += delta;
+            // Aguarda 1.2 segundos rodando a animação antes de ir para os créditos
+            if (tempoEntrando >= 1.2f) {
+                jogo.setScreen(new CreditsScreen(jogo));
+                return;
+            }
+        }
+
         float centroRobo = roboX + (tamanhoRobo / 2f);
 
         boolean pertoCeit = (centroRobo >= 7400f && centroRobo <= 7800f);
@@ -601,8 +612,10 @@ public class GameScreen implements Screen {
                     jogo.npc3Liberado = true;
                 }
                 else if (centroRobo >= 7400f && centroRobo <= 7800f) {
-                    jogo.setScreen(new CreditsScreen(jogo));
-                    return;
+                    if (!roboEntrando) {
+                        roboEntrando = true;
+                        tempoEntrando = 0f; // Inicializa o cronômetro da animação
+                    }
                 }
 
                 podeInteragir = false;
@@ -744,14 +757,14 @@ public class GameScreen implements Screen {
 
 
 // ---- BOTÃO DE INTERAÇÃO NA PORTA DO CEIT ----
-        if (centroRobo >= 7400f && centroRobo <= 7800f) {
+        if (centroRobo >= 7550f && centroRobo <= 7700f) {
             TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
 
             float escala = 0.45f;
             float larguraB = frameBotao.getRegionWidth() * escala;
             float alturaB  = frameBotao.getRegionHeight() * escala;
 
-            batch.draw(frameBotao, 7500, 400, larguraB, alturaB);
+            batch.draw(frameBotao, 7565, 500, larguraB, alturaB);
         }
 
         TextureRegion frameFabrica1 = animacaoFabrica1.getKeyFrame(elapsedTime, true);
@@ -966,10 +979,41 @@ public class GameScreen implements Screen {
         }
 
         // Robô
+        // ---- DESENHO DO ROBÔ COM EFEITO DE PERSPECTIVA ----
         TextureRegion frameRobo;
+        float drawX = roboX;
+        float drawY = roboY;
+        float drawWidth = tamanhoRobo;
+        float drawHeight = tamanhoRobo;
+
         if (roboEntrando) {
-            // Usa o cronómetro próprio da entrada para atualizar os frames
+            // Pega o frame da animação de entrada
             frameRobo = animacaoEntrando.getKeyFrame(tempoEntrando, true);
+
+            // --- CÁLCULO DA PERSPECTIVA (NOVO) ---
+            float duracaoTotal = 1.3f; // Tempo definido na lógica de transição
+            // Cria um fator de progresso de 0.0 (início) a 1.0 (fim)
+            // Usamos Math.min para garantir que não passe de 1.0
+            float progresso = Math.min(1.0f, tempoEntrando / duracaoTotal);
+
+            // 1. Diminuir tamanho (Escala): Começa em 100% e termina em 40% do tamanho original
+            float escalaInicial = 1.0f;
+            float escalaFinal = 0.6f; // Ajuste aqui o quão pequeno ele fica no final
+            // Interpolação linear: valorInicial + (valorFinal - valorInicial) * progresso
+            float escalaAtual = escalaInicial + (escalaFinal - escalaInicial) * progresso;
+
+            drawWidth = tamanhoRobo * escalaAtual;
+            drawHeight = tamanhoRobo * escalaAtual;
+
+            // 2. Aumentar a altura Y (Subir): Começa na base e sobe um pouco para "entrar"
+            float sobePixelFinal = 180f; // Quantos pixels ele sobe para dentro da porta
+            drawY = roboY + (sobePixelFinal * progresso);
+
+            // 3. Centralizar X: Como diminuímos a largura, precisamos ajustar o X
+            // para que ele continue centralizado no meio da porta.
+            float centroOriginalX = roboX + tamanhoRobo / 2f;
+            drawX = centroOriginalX - drawWidth / 2f;
+
         } else if (esq) {
             frameRobo = animacaoEsquerda.getKeyFrame(elapsedTime, true);
         } else if (dir) {
@@ -977,7 +1021,9 @@ public class GameScreen implements Screen {
         } else {
             frameRobo = animacaoParado.getKeyFrame(elapsedTime, true);
         }
-        batch.draw(frameRobo, roboX, roboY, tamanhoRobo, tamanhoRobo);
+
+        // Desenha o robô com os parâmetros (X, Y, Largura, Altura) calculados
+        batch.draw(frameRobo, drawX, drawY, drawWidth, drawHeight);
 
         // Portinhas — original 0/5600 + 800 = 800/6400
         batch.draw(portinhaImg,  800,  0, 800, alturaJanela - 259);
@@ -988,7 +1034,7 @@ public class GameScreen implements Screen {
             int seg = (int) Math.ceil(tempoAFK);
             String mensagemAFK = textosAFK[jogo.idioma] + seg;
 
-            fonte.getData().setScale(2.5f);4
+            fonte.getData().setScale(2.5f);
             fonte.setColor(Color.WHITE);
 
             GlyphLayout layoutAFK = new GlyphLayout(fonte, mensagemAFK);

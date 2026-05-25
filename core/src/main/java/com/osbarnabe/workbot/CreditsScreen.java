@@ -267,24 +267,24 @@ public class CreditsScreen implements Screen {
             estereggDipp,
             0, // Centraliza uma imagem de largura 100
             espacamentoY - 1680f,  // Posiciona abaixo do botão acompanhando a rolagem
-            100f,
-            100f
+            50f,
+            50f
         );
 
         batch.draw(
             estereggCosta,
-            100, // Centraliza uma imagem de largura 100
+            50, // Centraliza uma imagem de largura 100
             espacamentoY - 1680f,  // Posiciona abaixo do botão acompanhando a rolagem
-            100f,
-            100f
+            50f,
+            50f
         );
 
         batch.draw(
             estereggBiondo,
-            200, // Centraliza uma imagem de largura 100
+            100, // Centraliza uma imagem de largura 100
             espacamentoY - 1680f,  // Posiciona abaixo do botão acompanhando a rolagem
-            100f,
-            100f
+            50f,
+            50f
         );
 
         batch.end();
