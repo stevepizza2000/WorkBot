@@ -30,6 +30,7 @@ public class GameScreen implements Screen {
     private Animation<TextureRegion> animacaoParado;
     private Animation<TextureRegion> animacaoDireita;
     private Animation<TextureRegion> animacaoEsquerda;
+    private Animation<TextureRegion> animacaoEntrando;
 
     // Animações de personagens do cenário
     private Animation<TextureRegion> animacaoTrabalhador;
@@ -51,7 +52,7 @@ public class GameScreen implements Screen {
     private BitmapFont fonte;
 
     // Texturas do cenário
-    private Texture RoboParadoImg, RoboDirImg, RoboEsqImg;
+    private Texture RoboParadoImg, RoboDirImg, RoboEsqImg, RoboEntrandoImg;
     private Texture ceu1Img, ceu2Img, portinha2Img, finalImg;
     private Texture trabalhadorImg, trabalhador2Img, trabalhador3Img;
 
@@ -74,8 +75,17 @@ public class GameScreen implements Screen {
     private Texture localporta2SpriteImg;
     private Animation<TextureRegion> animacaoLocalPorta2;
 
-    private Texture ceitSpriteImg;
+    private Texture ceitSpriteImg, ceitSpriteFechandoImg;
     private Animation<TextureRegion> animacaoCeit;
+    private Animation<TextureRegion> animacaoCeitFechando;
+
+    // --- CONTROLE DO FINAL (CEIT) ---
+    private float tempoCeit = 0f;
+    private boolean ceitAbrindo = false;
+
+    // --- CONTROLE DA ANIMAÇÃO DE ENTRADA NO CEIT ---
+    private boolean roboEntrando = false;
+    private float tempoEntrando = 0f;
 
     private Texture fabrica2SpriteImg;
     private Animation<TextureRegion> animacaoFabrica2;
@@ -205,6 +215,7 @@ public class GameScreen implements Screen {
         RoboParadoImg  = jogo.assets.get("roboParado.png",   Texture.class);
         RoboDirImg     = jogo.assets.get("roboDir.png",      Texture.class);
         RoboEsqImg     = jogo.assets.get("roboEsq.png",      Texture.class);
+        RoboEntrandoImg= jogo.assets.get("roboPorta.png", Texture.class);
         fabrica3SpriteImg = jogo.assets.get("fabrica3_sprite.png", Texture.class);
         ceu1Img        = jogo.assets.get("ceu1.png",         Texture.class);
         ceu2Img        = jogo.assets.get("ceu2.png",         Texture.class);
@@ -220,6 +231,7 @@ public class GameScreen implements Screen {
 
         //animações fundo
         ceitSpriteImg = jogo.assets.get("ceit_sprite.png", Texture.class);
+        ceitSpriteFechandoImg = jogo.assets.get("ceit_sprite_fechando.png", Texture.class);
         fabrica2SpriteImg = jogo.assets.get("fabrica2_sprite.png", Texture.class);
         fabrica1SpriteImg = jogo.assets.get("fabrica1_sprite.png", Texture.class);
         localportaSpriteImg = jogo.assets.get("localporta_sprite.png", Texture.class);
@@ -314,6 +326,15 @@ public class GameScreen implements Screen {
             )
         );
 
+        animacaoCeitFechando = new Animation<>(0.15f,
+            extrairFrames(
+                ceitSpriteFechandoImg,
+                ceitSpriteFechandoImg.getWidth() / 8,
+                ceitSpriteFechandoImg.getHeight(),
+                8
+            )
+        );
+
         //animação local porta 3
         animacaoLocalPorta3 = new Animation<>(0.10f,
             extrairFrames(
@@ -347,6 +368,8 @@ public class GameScreen implements Screen {
         animacaoParado      = new Animation<>(0.45f, extrairFrames(RoboParadoImg,  64,  64, 7));
         animacaoDireita     = new Animation<>(0.15f, extrairFrames(RoboDirImg,     64,  64, 2));
         animacaoEsquerda    = new Animation<>(0.15f, extrairFrames(RoboEsqImg,     64,  64, 2));
+        animacaoEntrando    = new Animation<>(0.15f, extrairFrames(RoboEntrandoImg,     100,  100, 2));
+
         animacaoTrabalhador = new Animation<>(0.45f, extrairFrames(trabalhadorImg, 700, 700, 2));
         animacaoTrabalhador2 = new Animation<>(0.45f, extrairFrames(trabalhador2Img, 100, 100, 2));
         animacaoTrabalhador3 = new Animation<>(0.45f, extrairFrames(trabalhador3Img, 100, 100, 6));
@@ -451,7 +474,24 @@ public class GameScreen implements Screen {
         boolean dir = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 
         elapsedTime += delta;
+
         float centroRobo = roboX + (tamanhoRobo / 2f);
+
+        boolean pertoCeit = (centroRobo >= 7400f && centroRobo <= 7800f);
+
+        if (pertoCeit) {
+            if (!ceitAbrindo) {
+                ceitAbrindo = true;
+                tempoCeit = 0f; // Reseta para começar a abrir do primeiro frame
+            }
+            tempoCeit += delta;
+        } else {
+            if (ceitAbrindo) {
+                ceitAbrindo = false;
+                tempoCeit = 0f; // Reseta para começar a fechar do primeiro frame
+            }
+            tempoCeit += delta;
+        }
 
         if (tempoMensagemBarreira > 0) {
             tempoMensagemBarreira -= delta;
@@ -560,6 +600,10 @@ public class GameScreen implements Screen {
 
                     jogo.npc3Liberado = true;
                 }
+                else if (centroRobo >= 7400f && centroRobo <= 7800f) {
+                    jogo.setScreen(new CreditsScreen(jogo));
+                    return;
+                }
 
                 podeInteragir = false;
 
@@ -568,7 +612,7 @@ public class GameScreen implements Screen {
             podeInteragir = true;
         }
 
-        if (dialogoAtivo || dialogoNPC2 || mostrandoPlacaI || dialogoNPC3 || exibirProcurado) { // <--- Adicionado aqui
+        if (dialogoAtivo || dialogoNPC2 || roboEntrando || mostrandoPlacaI || dialogoNPC3 || exibirProcurado) { // <--- Adicionado aqui
             mensagemBarreira = "";
             tempoMensagemBarreira = 0f;
             esq = false;
@@ -688,8 +732,27 @@ public class GameScreen implements Screen {
         batch.draw(finalImg, 8000, 0, 800, alturaJanela - 259);
 
         //fundo animado
-        TextureRegion frameCeit = animacaoCeit.getKeyFrame(elapsedTime, true);
-        batch.draw(frameCeit, 7200, 0, 800, alturaJanela - 259);
+        TextureRegion frameCeitAtual;
+        if (ceitAbrindo) {
+            // false indica que não vai repetir em loop. Para no último frame (aberto)
+            frameCeitAtual = animacaoCeit.getKeyFrame(tempoCeit, false);
+        } else {
+            // false faz parar no último frame de fechamento (fechado)
+            frameCeitAtual = animacaoCeitFechando.getKeyFrame(tempoCeit, false);
+        }
+        batch.draw(frameCeitAtual, 7200, 0, 800, alturaJanela - 259);
+
+
+// ---- BOTÃO DE INTERAÇÃO NA PORTA DO CEIT ----
+        if (centroRobo >= 7400f && centroRobo <= 7800f) {
+            TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
+
+            float escala = 0.45f;
+            float larguraB = frameBotao.getRegionWidth() * escala;
+            float alturaB  = frameBotao.getRegionHeight() * escala;
+
+            batch.draw(frameBotao, 7500, 400, larguraB, alturaB);
+        }
 
         TextureRegion frameFabrica1 = animacaoFabrica1.getKeyFrame(elapsedTime, true);
         batch.draw(frameFabrica1, 2400, 0, 800, alturaJanela - 259);
@@ -903,18 +966,18 @@ public class GameScreen implements Screen {
         }
 
         // Robô
-        TextureRegion frame;
-        if (dir && !esq) {
-            frame = animacaoDireita.getKeyFrame(elapsedTime, true);
-            roboY = 65f;
-        } else if (esq && !dir) {
-            frame = animacaoEsquerda.getKeyFrame(elapsedTime, true);
-            roboY = 65f;
+        TextureRegion frameRobo;
+        if (roboEntrando) {
+            // Usa o cronómetro próprio da entrada para atualizar os frames
+            frameRobo = animacaoEntrando.getKeyFrame(tempoEntrando, true);
+        } else if (esq) {
+            frameRobo = animacaoEsquerda.getKeyFrame(elapsedTime, true);
+        } else if (dir) {
+            frameRobo = animacaoDireita.getKeyFrame(elapsedTime, true);
         } else {
-            frame = animacaoParado.getKeyFrame(elapsedTime, true);
-            roboY = 70f;
+            frameRobo = animacaoParado.getKeyFrame(elapsedTime, true);
         }
-        batch.draw(frame, roboX, roboY, tamanhoRobo, tamanhoRobo);
+        batch.draw(frameRobo, roboX, roboY, tamanhoRobo, tamanhoRobo);
 
         // Portinhas — original 0/5600 + 800 = 800/6400
         batch.draw(portinhaImg,  800,  0, 800, alturaJanela - 259);
@@ -925,7 +988,7 @@ public class GameScreen implements Screen {
             int seg = (int) Math.ceil(tempoAFK);
             String mensagemAFK = textosAFK[jogo.idioma] + seg;
 
-            fonte.getData().setScale(2.5f);
+            fonte.getData().setScale(2.5f);4
             fonte.setColor(Color.WHITE);
 
             GlyphLayout layoutAFK = new GlyphLayout(fonte, mensagemAFK);
