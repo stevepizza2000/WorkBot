@@ -675,14 +675,14 @@ public class GameScreen implements Screen {
             if (!processouBotao) {
 
                 if (colideComPorta(porta1)) {
-                    if (!roboEntrando) {
+                    if (!roboEntrando && !jogo.puzzle1Completo) {
                         roboEntrando = true;
                         tempoEntrando = 0f;
                         destinoEntrada = 1; // Regista que vai para o Puzzle 1
                     }
                 }
                 else if (colideComPorta(porta2)) {
-                    if (!roboEntrando) {
+                    if (!roboEntrando && !jogo.puzzle2Completo) {
                         roboEntrando = true;
                         tempoEntrando = 0f;
                         destinoEntrada = 2; // Regista que vai para o Puzzle 2
@@ -871,7 +871,7 @@ public class GameScreen implements Screen {
         batch.draw(animacaoTrabalhador.getKeyFrame(elapsedTime, true), 3180, 210, 260, 260);
 
         // BOTÃO PORTA 1
-        if (colideComPorta(porta1)) {
+        if (colideComPorta(porta1) && !jogo.puzzle1Completo) {
 
             TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
 
@@ -886,7 +886,7 @@ public class GameScreen implements Screen {
         }
 
         // BOTÃO PORTA 2
-        if (colideComPorta(porta2)) {
+        if (colideComPorta(porta2) && !jogo.puzzle2Completo) {
 
             TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
 
