@@ -48,7 +48,7 @@ public class MenuScreen implements Screen {
         batch = new SpriteBatch();
 
         FreeTypeFontGenerator generator =
-            new FreeTypeFontGenerator(Gdx.files.internal("assets/fonts/PixelifySans-Regular.ttf"));
+            new FreeTypeFontGenerator(Gdx.files.internal("fonts/PixelifySans-Regular.ttf"));
 
         FreeTypeFontGenerator.FreeTypeFontParameter parameter =
             new FreeTypeFontGenerator.FreeTypeFontParameter();
