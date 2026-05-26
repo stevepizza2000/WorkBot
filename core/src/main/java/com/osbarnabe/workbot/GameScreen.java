@@ -498,16 +498,6 @@ public class GameScreen implements Screen {
             System.out.println("Velocidade alterada para: " + velocidadeRobo);
         }
 
-        // Troca de tela ao fechar a porta
-      //  if (!porta1.estaAberta) {
-        //   jogo.setScreen(new puzzle1(jogo));
-         //   return;
-       // }
-        //if (!porta2.estaAberta) {
-         //   jogo.setScreen(new puzzle2(jogo));
-         //   return;
-       //}
-
         boolean esq = Gdx.input.isKeyPressed(Input.Keys.LEFT);
         boolean dir = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 
@@ -524,6 +514,7 @@ public class GameScreen implements Screen {
                 } else if (destinoEntrada == 2) {
                     jogo.setScreen(new puzzle2(jogo));
                 } else if (destinoEntrada == 3) {
+                    resetarProgresso();
                     jogo.setScreen(new CreditsScreen(jogo));
                 }
                 return;
@@ -713,7 +704,10 @@ public class GameScreen implements Screen {
             tempoPressionado = 0;
             processouBotao   = false;
             tempoAFK -= delta;
-            if (tempoAFK <= limiteAFK) jogo.setScreen(new MenuScreen(jogo));
+            if (tempoAFK <= limiteAFK) {
+                resetarProgresso();
+                jogo.setScreen(new MenuScreen(jogo));
+            }
         }
 
         // Limite esquerdo
@@ -1154,5 +1148,16 @@ public class GameScreen implements Screen {
             for (TextureRegion col : linha)
                 if (idx < qtd) frames[idx++] = col;
         return frames;
+    }
+
+    private void resetarProgresso() {
+        jogo.npc1Completo = false;
+        jogo.npc1PosPuzzleFalou = false;
+        jogo.npc1Fase2Falou = false;
+        jogo.puzzle1Completo = false;
+        jogo.puzzle2Completo = false;
+        jogo.npc3Falou = false;
+        jogo.npc3PosPuzzleFalou = false;
+        jogo.npc3Liberado = false;
     }
 }
