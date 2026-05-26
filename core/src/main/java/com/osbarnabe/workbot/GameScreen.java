@@ -170,25 +170,37 @@ public class GameScreen implements Screen {
         "The game will close in: "   // EN
     };
 
-    private String[] mensagemBarreira1 = {
+    private String[] mensagemBarreiraNPC1 = {
         "Fale com o trabalho primeiro!",
         "¡Habla primero con el trabajador!",
         "Talk to the worker first!"
     };
 
-    private String[] mensagemBarreira2 = {
+    private String[] mensagemBarreiraPuzzle1 = {
         "Complete o Puzzle 1 primeiro!",
         "¡Completa primero el Rompecabezas 1!",
         "Complete Puzzle 1 first!"
     };
 
-    private String[] mensagemBarreira4 = {
+    private String[] mensagemBarreiraPuzzle2 = {
         "Complete o Puzzle 2 primeiro!",
         "¡Completa primero el Rompecabezas 2!",
         "Complete Puzzle 2 first!"
     };
 
-    private String[] mensagemBarreira3 = {
+    private String[] mensagemBarreiraNPC1_2 = {
+        "Converse com o trabalhador \nnovamente!",
+        "¡Habla de nuevo con el \ntrabajador!",
+        "Talk to the worker again!"
+    };
+
+    private String[] mensagemBarreiraNPC2 = {
+        "Converse com o trabalhador!",
+        "¡Habla con el trabajador!",
+        "Talk to the worker!"
+    };
+
+    private String[] mensagemBarreiraNPC2_2 = {
         "Converse com o trabalhador \nnovamente!",
         "¡Habla de nuevo con el \ntrabajador!",
         "Talk to the worker again!"
@@ -717,7 +729,7 @@ public class GameScreen implements Screen {
             float limite = 3550f;
             if (roboX + tamanhoRobo > limite) {
                 roboX = limite - tamanhoRobo;
-                mensagemBarreira = "Fale com o trabalhador primeiro!";
+                mensagemBarreira = mensagemBarreiraNPC1[jogo.idioma];
                 tempoMensagemBarreira = 3f;
             }
         }
@@ -728,9 +740,9 @@ public class GameScreen implements Screen {
             if (roboX + tamanhoRobo > limitePuzzle) {
                 roboX = limitePuzzle - tamanhoRobo;
                 if (!jogo.puzzle1Completo) {
-                    mensagemBarreira = "Complete o Puzzle 1 primeiro!";
+                    mensagemBarreira = mensagemBarreiraPuzzle1[jogo.idioma];
                 } else {
-                    mensagemBarreira = "Converse com o trabalhador \nnovamente!";
+                    mensagemBarreira = mensagemBarreiraNPC1_2[jogo.idioma];
                 }
                 tempoMensagemBarreira = 3f;
             }
@@ -741,7 +753,7 @@ public class GameScreen implements Screen {
             float limiteNPC3 = 5950f;
             if (roboX + tamanhoRobo > limiteNPC3) {
                 roboX = limiteNPC3 - tamanhoRobo;
-                mensagemBarreira = "Converse com o trabalhador!";
+                mensagemBarreira = mensagemBarreiraNPC2[jogo.idioma];
                 tempoMensagemBarreira = 3f;
             }
         }
@@ -752,9 +764,9 @@ public class GameScreen implements Screen {
             if (roboX + tamanhoRobo > limiteDepoisPorta2) {
                 roboX = limiteDepoisPorta2 - tamanhoRobo;
                 if (!jogo.puzzle2Completo) {
-                    mensagemBarreira = "Finalize o Puzzle 2 primeiro!";
+                    mensagemBarreira = mensagemBarreiraPuzzle2[jogo.idioma];
                 } else {
-                    mensagemBarreira = "Converse com o trabalhador \nnovamente!";
+                    mensagemBarreira = mensagemBarreiraNPC2_2[jogo.idioma];
                 }
                 tempoMensagemBarreira = 3f;
             }

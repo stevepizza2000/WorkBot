@@ -89,7 +89,7 @@ public class puzzle1 implements Screen {
     private String missao[] = {
         "MISSÃO CUMPRIDA!",
         "MISIÓN CUMPLIDA!",
-        "MISSION ACCOMPLISHED!"
+        "MISSION COMPLETE!"
     };
 
     private String ferro[] = {
