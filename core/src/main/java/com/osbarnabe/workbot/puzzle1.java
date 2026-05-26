@@ -75,7 +75,7 @@ public class puzzle1 implements Screen {
     };
 
     private String pressione[] = {
-        "Pressione os dois botoes (ESQ + DIR) juntos para iniciar!",
+        "Pressione os dois botões (ESQ + DIR) juntos para iniciar!",
         "¡Pulsa ambos botones (IZQUIERDA + DERECHA) a la vez para empezar!",
         "Press both buttons (LEFT + RIGHT) at the same time to begin!"
     };
@@ -87,7 +87,7 @@ public class puzzle1 implements Screen {
     };
 
     private String missao[] = {
-        "MISSAO CUMPRIDA!",
+        "MISSÃO CUMPRIDA!",
         "MISIÓN CUMPLIDA!",
         "MISSION ACCOMPLISHED!"
     };
@@ -268,7 +268,7 @@ public class puzzle1 implements Screen {
             // TITULO
             // =========================
             fonte.setColor(Color.YELLOW);
-            fonte.getData().setScale(3f);
+            fonte.getData().setScale(4f);
 
             layout.setText(fonte, comojogar[jogo.idioma]);
 
@@ -283,7 +283,7 @@ public class puzzle1 implements Screen {
             // TEXTO DIREITA
             // =========================
             fonte.setColor(Color.WHITE);
-            fonte.getData().setScale(1.8f);
+            fonte.getData().setScale(2.1f);
 
             layout.setText(fonte, setad[jogo.idioma]);
 
@@ -310,7 +310,7 @@ public class puzzle1 implements Screen {
             // TEXTO INICIAR
             // =========================
             fonte.setColor(Color.YELLOW);
-            fonte.getData().setScale(1.8f);
+            fonte.getData().setScale(2.1f);
 
             layout.setText(fonte, pressione[jogo.idioma]);
 
@@ -334,7 +334,7 @@ public class puzzle1 implements Screen {
             if (!puzzleFinalizado) {
 
                 fonte.setColor(Color.WHITE);
-                fonte.getData().setScale(2.5f);
+                fonte.getData().setScale(3.1f);
 
                 fonte.draw(
                     batch,
@@ -351,7 +351,7 @@ public class puzzle1 implements Screen {
 
                 // MISSAO CUMPRIDA
                 fonte.setColor(Color.GREEN);
-                fonte.getData().setScale(3f);
+                fonte.getData().setScale(4f);
 
                 layout.setText(fonte, missao[jogo.idioma]);
 
@@ -364,7 +364,7 @@ public class puzzle1 implements Screen {
 
                 // TEXTO DO FERRO
                 fonte.setColor(Color.WHITE);
-                fonte.getData().setScale(2f);
+                fonte.getData().setScale(3f);
 
                 layout.setText(fonte, ferro[jogo.idioma]);
 

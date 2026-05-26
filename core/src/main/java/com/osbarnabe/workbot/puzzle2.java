@@ -7,8 +7,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -23,6 +25,8 @@ public class puzzle2 implements Screen {
     private BitmapFont font;
 
     private Texture texBird;
+    private Animation<TextureRegion> animacaoBird;
+
     private Texture texPipeDown;
     private Texture texPipeUp;
     private Texture texBackground;
@@ -56,9 +60,14 @@ public class puzzle2 implements Screen {
     float pipeWidth = 65f;
     float margem    = 5f;
 
-    // 🔥 TAMANHO DA FACA (NOVO)
+    // 🔥 TAMANHO DA FACA
     private float facaLargura = 65f;
     private float facaAltura  = 65f;
+
+    // 🤖 TAMANHO DE RENDERIZAÇÃO DO ROBÔ
+    // Ajustado para manter a proporção do novo robô com asas
+    private float larguraBird = 90f;
+    private float alturaBird  = 90f;
 
     private final float gap = 120f;
 
@@ -111,26 +120,37 @@ public class puzzle2 implements Screen {
         parameter.color = Color.WHITE;
 
         font = generator.generateFont(parameter);
-
-        // deixa a fonte mais larga horizontalmente
         font.getData().setScale(1.0f, 1.0f);
-
         generator.dispose();
 
         // ===== TEXTURAS =====
+        // Certifique-se de que o arquivo "bird.png" na pasta assets agora seja essa nova imagem!
         texBird       = new Texture("bird.png");
         texPipeDown   = new Texture("pipe_down.png");
         texPipeUp     = new Texture("pipe_up.png");
         texBackground = new Texture("fundo_puzzle2.png");
         texFaca       = new Texture("Faca.png");
 
-        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        // ===== CONFIGURAÇÃO DA ANIMAÇÃO DO ROBÔ (BIRD) =====
+        // Lógica adaptada para a sua nova imagem (grade 2x2 com 3 frames úteis)
+        int colunas = 2;
+        int linhas = 2;
+        int qtdFrames = 3;
 
+        TextureRegion[] framesBird = extrairFrames(
+            texBird,
+            texBird.getWidth() / colunas,
+            texBird.getHeight() / linhas,
+            qtdFrames
+        );
+
+        animacaoBird = new Animation<>(0.10f, framesBird); // 0.10f deixa o bater de asas rapidinho
+        animacaoBird.setPlayMode(Animation.PlayMode.LOOP);
+
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(0, 0, 0, 1);
         pixmap.fill();
-
         texPreto = new Texture(pixmap);
-
         pixmap.dispose();
 
         facaRect = new Rectangle();
@@ -157,9 +177,7 @@ public class puzzle2 implements Screen {
 
         // RECUO
         if (recuoX > 0) {
-
             recuoX -= 800f * delta;
-
             if (recuoX < 0) {
                 recuoX = 0;
             }
@@ -171,21 +189,14 @@ public class puzzle2 implements Screen {
         distanciaPercorrida += vEfetiva * delta;
 
         if (distanciaPercorrida >= DISTANCIA_ENTRE_CANOS) {
-
             distanciaPercorrida = 0;
-
-            canosGerados++; // Contador total de canos criados
-
+            canosGerados++;
 
             Cano c = new Cano();
-
             c.x = WIDTH;
             c.gapY = MathUtils.random(120, 340);
 
-
-            // 🔥 SPAWNA A FACA EXATAMENTE NO CANO 6
             if (canosGerados == 6) {
-
                 c.temFaca = true;
             }
 
@@ -202,47 +213,27 @@ public class puzzle2 implements Screen {
             canos.removeIndex(0);
         }
 
-
-        bird.set(80f, birdY, 90f, 50f); // X e tamanho iguais ao desenho
-
+        // Hitbox menor que o desenho visual (0.6f na largura e 0.45f na altura)
+        // para ignorar as áreas transparentes ao redor das asas do robô.
+        bird.set(80f + (larguraBird * 0.2f), birdY + (alturaBird * 0.25f), larguraBird * 0.6f, alturaBird * 0.45f);
 
         for (Cano c : canos) {
 
             float bottomHeight = c.gapY - gap / 2f;
             float topY         = c.gapY + gap / 2f;
 
-            pipeBottom.set(
-                c.x,
-                0f,
-                pipeWidth,
-                bottomHeight
-            );
-
-            pipeTop.set(
-                c.x,
-                topY,
-                pipeWidth,
-                HEIGHT - topY
-            );
+            pipeBottom.set(c.x, 0f, pipeWidth, bottomHeight);
+            pipeTop.set(c.x, topY, pipeWidth, HEIGHT - topY);
 
             // ===== FACA =====
             if (c.temFaca) {
-
                 float offsetX = 10f;
                 float offsetY = -6f;
 
-                float facaX =
-                    c.x + (pipeWidth / 2f) - (facaLargura / 2f) + offsetX;
+                float facaX = c.x + (pipeWidth / 2f) - (facaLargura / 2f) + offsetX;
+                float facaY = c.gapY - (facaAltura / 2f) + offsetY;
 
-                float facaY =
-                    c.gapY - (facaAltura / 2f) + offsetY;
-
-                facaRect.set(
-                    facaX,
-                    facaY,
-                    facaLargura,
-                    facaAltura
-                );
+                facaRect.set(facaX, facaY, facaLargura, facaAltura);
 
                 if (bird.overlaps(facaRect) && !pegouFaca) {
                     pegouFaca = true;
@@ -252,30 +243,23 @@ public class puzzle2 implements Screen {
             // ===== COLISÃO =====
             if (bird.overlaps(pipeBottom) || bird.overlaps(pipeTop)) {
 
-                float birdRight = 85f + 30f;
+                float birdRight = bird.x + bird.width;
                 float pipeLeft  = c.x + margem;
-
                 float penetracaoX = birdRight - pipeLeft;
 
                 if (penetracaoX < 15f) {
-
                     if (recuoX < 400f) {
                         recuoX = 500f;
                     }
-
-                    if (birdY + 15f < c.gapY) {
+                    if (birdY + (alturaBird/2f) < c.gapY) {
                         velY = -50f;
                     } else {
                         velY = 50f;
                     }
-
                 } else {
-
                     if (bird.overlaps(pipeBottom)) {
                         velY = 180f;
-                    }
-
-                    else if (bird.overlaps(pipeTop)) {
+                    } else if (bird.overlaps(pipeTop)) {
                         velY = -180f;
                     }
                 }
@@ -283,30 +267,23 @@ public class puzzle2 implements Screen {
 
             // SCORE
             if (c.x + pipeWidth < 80f && !c.passou) {
-
-                // 🔥 Só aumenta o score se ainda não chegou em 5
                 if (score < 5) {
                     score++;
                 }
-
                 c.passou = true;
             }
         }
 
         // LIMITES
-        if (birdY < 0f) {
-
-            birdY = 0f;
-
+        if (birdY < -20f) {
+            birdY = -20f;
             if (velY < 0) {
                 velY = 0;
             }
         }
 
-        if (birdY > HEIGHT - 40f) {
-
-            birdY = HEIGHT - 40f;
-
+        if (birdY > HEIGHT - alturaBird + 20f) {
+            birdY = HEIGHT - alturaBird + 20f;
             if (velY > 0) {
                 velY = 0;
             }
@@ -314,24 +291,15 @@ public class puzzle2 implements Screen {
 
         // TRANSIÇÃO
         if (pegouFaca) {
-
             transicaoAlpha += delta * 1.5f;
-
             if (transicaoAlpha >= 1f) {
-
                 transicaoAlpha = 1f;
-
                 jogo.puzzle2Completo = true;
                 jogo.npc3PosPuzzleFalou = false;
-
-                jogo.setScreen(
-                    new GameScreen(jogo, 5820f, 65f)
-                );
+                jogo.setScreen(new GameScreen(jogo, 5820f, 65f));
             }
         }
     }
-
-
 
     @Override
     public void render(float delta) {
@@ -339,43 +307,23 @@ public class puzzle2 implements Screen {
         ScreenUtils.clear(0.4f, 0.7f, 1f, 1f);
 
         update(delta);
-
         camera.update();
-
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
 
         batch.draw(texBackground, 0, 0, WIDTH, HEIGHT);
 
-        batch.draw(texBird, 80f, birdY, 100f, 50f);
-
-
         float alturaCano = 300f;
 
         for (Cano c : canos) {
-
             float bottomHeight = c.gapY - gap / 2f;
             float topY = c.gapY + gap / 2f;
 
-            batch.draw(
-                texPipeDown,
-                c.x,
-                bottomHeight - alturaCano,
-                pipeWidth,
-                alturaCano
-            );
+            batch.draw(texPipeDown, c.x, bottomHeight - alturaCano, pipeWidth, alturaCano);
+            batch.draw(texPipeUp, c.x, topY, pipeWidth, alturaCano);
 
-// DESENHA O CANO DE CIMA (Trazido da branch puzzle1 para o cano não sumir da tela!)
-            batch.draw(
-                texPipeUp,
-                c.x,
-                topY,
-                pipeWidth,
-                alturaCano
-            );
-
-            // 🔥 DESENHO DA FACA COM TODAS AS ANIMAÇÕES UNIFICADAS (Da sua branch atual)
+            // 🔥 DESENHO DA FACA
             if (c.temFaca && !pegouFaca) {
 
                 float flutuarY = MathUtils.sin(tempoAnimacao * 4f) * 8f;
@@ -388,43 +336,19 @@ public class puzzle2 implements Screen {
                 float facaX = c.x + (pipeWidth / 2f) - (largAnimada / 2f);
                 float facaY = c.gapY - (altAnimada / 2f) + flutuarY;
 
-                // ===== AURA BRANCA =====
-                // ===== GLOW SUAVE =====
                 float pulse = MathUtils.sin(tempoAnimacao * 3f);
 
                 batch.setColor(1f, 1f, 1f, 0.10f + pulse * 0.02f);
-
-                batch.draw(
-                    texFaca,
-                    facaX - 18f,
-                    facaY - 18f,
-                    largAnimada + 36f,
-                    altAnimada + 36f
-                );
+                batch.draw(texFaca, facaX - 18f, facaY - 18f, largAnimada + 36f, altAnimada + 36f);
 
                 batch.setColor(1f, 1f, 1f, 0.16f + pulse * 0.03f);
-
-                batch.draw(
-                    texFaca,
-                    facaX - 10f,
-                    facaY - 10f,
-                    largAnimada + 20f,
-                    altAnimada + 20f
-                );
+                batch.draw(texFaca, facaX - 10f, facaY - 10f, largAnimada + 20f, altAnimada + 20f);
 
                 batch.setColor(1f, 1f, 1f, 0.25f + pulse * 0.04f);
-
-                batch.draw(
-                    texFaca,
-                    facaX - 4f,
-                    facaY - 4f,
-                    largAnimada + 8f,
-                    altAnimada + 8f
-                );
+                batch.draw(texFaca, facaX - 4f, facaY - 4f, largAnimada + 8f, altAnimada + 8f);
 
                 batch.setColor(1f, 1f, 1f, 1f);
 
-                // ===== FACA =====
                 batch.draw(texFaca,
                     facaX, facaY,
                     largAnimada / 2f, altAnimada / 2f,
@@ -434,37 +358,35 @@ public class puzzle2 implements Screen {
                     0, 0, texFaca.getWidth(), texFaca.getHeight(),
                     false, false);
             }
-        } // fim do loop for dos canos
+        }
 
-        // 🔥 LÓGICA DAS MENSAGENS (Canto Superior Esquerdo)
+        // 🤖 RENDERIZAÇÃO DO ROBÔ VOADOR (Desenhado DEPOIS dos canos para ele não sumir atrás deles)
+        TextureRegion frameAtualBird = animacaoBird.getKeyFrame(tempoAnimacao, true);
+
+        // Aplica uma rotação leve dependendo se ele está caindo ou subindo (efeito Flappy Bird)
+        float rotacaoRobo = velY * 0.05f;
+
+        batch.draw(frameAtualBird,
+            80f, birdY,
+            larguraBird / 2f, alturaBird / 2f,
+            larguraBird, alturaBird,
+            1f, 1f,
+            rotacaoRobo);
+
+        // MENSAGENS
         float margemX = 10f;
         float alturaBase = HEIGHT - 10f;
 
-        // Se o jogo for até 6 pontos (como estava na branch puzzle1), basta trocar o 5 por 6 abaixo!
-        // CONTADOR
-        font.draw(batch,
-            pontos[jogo.idioma] + score + "/5",
-            margemX,
-            alturaBase
-        );
+        font.draw(batch, pontos[jogo.idioma] + score + "/5", margemX, alturaBase);
 
-// MENSAGEM DA FACA
         if (score >= 5) {
-
-            font.draw(batch,
-                pegarKit[jogo.idioma],
-                margemX,
-                alturaBase - 28f
-            );
+            font.draw(batch, pegarKit[jogo.idioma], margemX, alturaBase - 28f);
         }
 
-        // Transição de saída (Fade Out)
+        // Fade Out
         if (transicaoAlpha > 0) {
-
             batch.setColor(1, 1, 1, transicaoAlpha);
-
             batch.draw(texPreto, 0, 0, WIDTH, HEIGHT);
-
             batch.setColor(1, 1, 1, 1);
         }
 
@@ -479,15 +401,28 @@ public class puzzle2 implements Screen {
 
     @Override
     public void dispose() {
-
         batch.dispose();
         font.dispose();
-
         texBackground.dispose();
         texBird.dispose();
         texPipeDown.dispose();
         texPipeUp.dispose();
         texFaca.dispose();
         texPreto.dispose();
+    }
+
+    // 🛠️ MÉTODO AUXILIAR PARA CORTAR OS FRAMES DA SPRITE SHEET
+    private TextureRegion[] extrairFrames(Texture tex, int lFrame, int aFrame, int qtd) {
+        TextureRegion[][] matriz = TextureRegion.split(tex, lFrame, aFrame);
+        TextureRegion[] frames   = new TextureRegion[qtd];
+        int idx = 0;
+        for (TextureRegion[] linha : matriz) {
+            for (TextureRegion reg : linha) {
+                if (idx < qtd) {
+                    frames[idx++] = reg;
+                }
+            }
+        }
+        return frames;
     }
 }
