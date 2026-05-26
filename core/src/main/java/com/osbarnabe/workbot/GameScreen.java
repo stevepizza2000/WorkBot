@@ -170,6 +170,30 @@ public class GameScreen implements Screen {
         "The game will close in: "   // EN
     };
 
+    private String[] mensagemBarreira1 = {
+        "Fale com o trabalho primeiro!",
+        "¡Habla primero con el trabajador!",
+        "Talk to the worker first!"
+    };
+
+    private String[] mensagemBarreira2 = {
+        "Complete o Puzzle 1 primeiro!",
+        "¡Completa primero el Rompecabezas 1!",
+        "Complete Puzzle 1 first!"
+    };
+
+    private String[] mensagemBarreira4 = {
+        "Complete o Puzzle 2 primeiro!",
+        "¡Completa primero el Rompecabezas 2!",
+        "Complete Puzzle 2 first!"
+    };
+
+    private String[] mensagemBarreira3 = {
+        "Converse com o trabalhador \nnovamente!",
+        "¡Habla de nuevo con el \ntrabajador!",
+        "Talk to the worker again!"
+    };
+
     private boolean velocidadeRapida = false;
 
     private boolean dialogoNPC2 = false;
