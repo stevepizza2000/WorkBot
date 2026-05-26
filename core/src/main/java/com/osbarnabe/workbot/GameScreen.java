@@ -86,6 +86,7 @@ public class GameScreen implements Screen {
     // --- CONTROLE DA ANIMAÇÃO DE ENTRADA NO CEIT ---
     private boolean roboEntrando = false;
     private float tempoEntrando = 0f;
+    private int destinoEntrada = 0;
 
 
     private Texture fabrica2SpriteImg;
@@ -462,14 +463,14 @@ public class GameScreen implements Screen {
         }
 
         // Troca de tela ao fechar a porta
-        if (!porta1.estaAberta) {
-            jogo.setScreen(new puzzle1(jogo));
-            return;
-        }
-        if (!porta2.estaAberta) {
-            jogo.setScreen(new puzzle2(jogo));
-            return;
-        }
+      //  if (!porta1.estaAberta) {
+        //   jogo.setScreen(new puzzle1(jogo));
+         //   return;
+       // }
+        //if (!porta2.estaAberta) {
+         //   jogo.setScreen(new puzzle2(jogo));
+         //   return;
+       //}
 
         boolean esq = Gdx.input.isKeyPressed(Input.Keys.LEFT);
         boolean dir = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
@@ -479,9 +480,16 @@ public class GameScreen implements Screen {
 // --- CONTROLE DO TEMPO DA ANIMAÇÃO DE ENTRADA ---
         if (roboEntrando) {
             tempoEntrando += delta;
-            // Aguarda 1.2 segundos rodando a animação antes de ir para os créditos
-            if (tempoEntrando >= 1.2f) {
-                jogo.setScreen(new CreditsScreen(jogo));
+
+            // Aguarda 1.3 segundos para a animação terminar o zoom
+            if (tempoEntrando >= 1.3f) {
+                if (destinoEntrada == 1) {
+                    jogo.setScreen(new puzzle1(jogo));
+                } else if (destinoEntrada == 2) {
+                    jogo.setScreen(new puzzle2(jogo));
+                } else if (destinoEntrada == 3) {
+                    jogo.setScreen(new CreditsScreen(jogo));
+                }
                 return;
             }
         }
@@ -614,7 +622,8 @@ public class GameScreen implements Screen {
                 else if (centroRobo >= 7400f && centroRobo <= 7800f) {
                     if (!roboEntrando) {
                         roboEntrando = true;
-                        tempoEntrando = 0f; // Inicializa o cronômetro da animação
+                        tempoEntrando = 0f;
+                        destinoEntrada = 3;
                     }
                 }
 
@@ -637,8 +646,22 @@ public class GameScreen implements Screen {
         if (esq && dir) {
             tempoAFK = 10f;
             if (!processouBotao) {
-                if (colideComPorta(porta1)) porta1.interagir();
-                else if (colideComPorta(porta2)) porta2.interagir();
+
+                if (colideComPorta(porta1)) {
+                    if (!roboEntrando) {
+                        roboEntrando = true;
+                        tempoEntrando = 0f;
+                        destinoEntrada = 1; // Regista que vai para o Puzzle 1
+                    }
+                }
+                else if (colideComPorta(porta2)) {
+                    if (!roboEntrando) {
+                        roboEntrando = true;
+                        tempoEntrando = 0f;
+                        destinoEntrada = 2; // Regista que vai para o Puzzle 2
+                    }
+                }
+
                 processouBotao = true;
             }
         } else if (esq || dir) {
