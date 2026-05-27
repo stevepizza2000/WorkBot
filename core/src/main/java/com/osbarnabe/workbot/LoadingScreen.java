@@ -1,10 +1,13 @@
 package com.osbarnabe.workbot;
 
+import com.badlogic.gdx.Gdx; // 🔥 IMPORTADO: Necessário para usar o Gdx.files
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color; // 🔥 IMPORTADO: Necessário para definir a cor da fonte
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator; // 🔥 IMPORTADO: Necessário para carregar fontes TTF
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -27,8 +30,19 @@ public class LoadingScreen implements Screen {
     public LoadingScreen(Main jogo) {
         this.jogo = jogo;
         batch = new SpriteBatch();
-        fonte = new BitmapFont();
-        fonte.getData().setScale(3f);
+
+        // 🔥 MODIFICADO: Criação da fonte usando o arquivo TTF do seu jogo
+        FreeTypeFontGenerator generator =
+            new FreeTypeFontGenerator(Gdx.files.internal("fonts/PixelifySans-Regular.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter =
+            new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+        parameter.size = 16;            // Tamanho base
+        parameter.color = Color.WHITE;  // Cor do texto
+        fonte = generator.generateFont(parameter);
+        fonte.getData().setScale(4.5f);   // Mantém a escala original da sua tela de loading
+
+        generator.dispose(); // Limpa o gerador da memória de vídeo
 
         camera = new OrthographicCamera();
         viewport = new FitViewport(1080f, 1920f, camera);

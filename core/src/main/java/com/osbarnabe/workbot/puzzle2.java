@@ -110,7 +110,7 @@ public class puzzle2 implements Screen {
         // ===== FONTE =====
         FreeTypeFontGenerator generator =
             new FreeTypeFontGenerator(
-                Gdx.files.internal("fonts/PixelifySans-Regular.ttf")
+                Gdx.files.internal("fonts/PixelifySans-SemiBold.ttf")
             );
 
         FreeTypeFontGenerator.FreeTypeFontParameter parameter =

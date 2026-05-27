@@ -87,7 +87,7 @@ public class CreditsScreen implements Screen {
 
         // 🔥 MODIFICADO: Criação das fontes usando o arquivo TTF do seu Menu
         FreeTypeFontGenerator generator =
-            new FreeTypeFontGenerator(Gdx.files.internal("fonts/PixelifySans-Bold.ttf"));
+            new FreeTypeFontGenerator(Gdx.files.internal("fonts/PixelifySans-SemiBold.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter =
             new FreeTypeFontGenerator.FreeTypeFontParameter();
 
