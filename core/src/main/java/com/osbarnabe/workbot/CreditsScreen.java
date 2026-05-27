@@ -3,10 +3,12 @@ package com.osbarnabe.workbot;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator; // 🔥 IMPORTADO: Necessário para carregar fontes TTF
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -83,11 +85,26 @@ public class CreditsScreen implements Screen {
         camera = new OrthographicCamera();
         viewport = new FitViewport(largura, altura, camera);
 
-        fonteCargo = new BitmapFont();
-        fonteCargo.getData().setScale(2f);
+        // 🔥 MODIFICADO: Criação das fontes usando o arquivo TTF do seu Menu
+        FreeTypeFontGenerator generator =
+            new FreeTypeFontGenerator(Gdx.files.internal("fonts/PixelifySans-Bold.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter =
+            new FreeTypeFontGenerator.FreeTypeFontParameter();
 
-        fonteNome = new BitmapFont();
-        fonteNome.getData().setScale(3f);
+        // Configuração da fonte dos Cargos (Tamanho base 16 + Cor Amarela)
+        parameter.size = 16;
+        parameter.color = Color.YELLOW;
+        fonteCargo = generator.generateFont(parameter);
+        fonteCargo.getData().setScale(2f); // Mantém a escala proporcional ao seu design anterior
+
+        // Configuração da fonte dos Nomes (Tamanho base 16 + Cor Branca)
+        parameter.size = 16;
+        parameter.color = Color.WHITE;
+        fonteNome = generator.generateFont(parameter);
+        fonteNome.getData().setScale(2f); // Mantém a escala proporcional ao seu design anterior
+
+        // Limpa o gerador da memória
+        generator.dispose();
 
         atualizarTexturasIdioma();
     }
@@ -265,24 +282,24 @@ public class CreditsScreen implements Screen {
 
         batch.draw(
             estereggDipp,
-            0, // Centraliza uma imagem de largura 100
-            espacamentoY - 1680f,  // Posiciona abaixo do botão acompanhando a rolagem
+            0,
+            espacamentoY - 1680f,
             50f,
             50f
         );
 
         batch.draw(
             estereggCosta,
-            50, // Centraliza uma imagem de largura 100
-            espacamentoY - 1680f,  // Posiciona abaixo do botão acompanhando a rolagem
+            50,
+            espacamentoY - 1680f,
             50f,
             50f
         );
 
         batch.draw(
             estereggBiondo,
-            100, // Centraliza uma imagem de largura 100
-            espacamentoY - 1680f,  // Posiciona abaixo do botão acompanhando a rolagem
+            100,
+            espacamentoY - 1680f,
             50f,
             50f
         );
