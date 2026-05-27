@@ -66,11 +66,14 @@ public class LoadingScreen implements Screen {
         jogo.assets.load("portinha.png",     Texture.class);
         jogo.assets.load("localporta_sprite.png", Texture.class);
         jogo.assets.load("localporta2_sprite.png", Texture.class);
+        jogo.assets.load("localporta2Fechada_sprite.png", Texture.class);
         jogo.assets.load("localporta3_sprite.png", Texture.class);
+        jogo.assets.load("localporta3Fechada_sprite.png", Texture.class);
         jogo.assets.load("trabalhador.png",  Texture.class);
         jogo.assets.load("trabalhador2.png", Texture.class);
         jogo.assets.load("trabalhador3.png", Texture.class);
         jogo.assets.load("porta.png",        Texture.class);
+        jogo.assets.load("portaFechada.png",        Texture.class);
         jogo.assets.load("ponto.png",        Texture.class);
         jogo.assets.load("trabalhador1flnd.png", Texture.class);
         jogo.assets.load("localFinal_sprite.png", Texture.class);

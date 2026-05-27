@@ -61,7 +61,7 @@ public class GameScreen implements Screen {
 
     private Texture portinhaImg;
 
-    private Texture portaImg;
+    private Texture portaImg, portaFechadaImg;
     private Texture pontoImg;
     private Texture fabrica3SpriteImg;
 
@@ -72,8 +72,9 @@ public class GameScreen implements Screen {
     private Texture localportaSpriteImg;
     private Animation<TextureRegion> animacaoLocalPorta;
 
-    private Texture localporta2SpriteImg;
+    private Texture localporta2SpriteImg, localporta2FechadaSpriteImg;
     private Animation<TextureRegion> animacaoLocalPorta2;
+    private Animation<TextureRegion> animacaoLocalPorta2Fechada;
 
     private Texture ceitSpriteImg, ceitSpriteFechandoImg;
     private Animation<TextureRegion> animacaoCeit;
@@ -95,8 +96,9 @@ public class GameScreen implements Screen {
     private Texture fabrica1SpriteImg;
     private Animation<TextureRegion> animacaoFabrica1;
 
-    private Texture localporta3SpriteImg;
+    private Texture localporta3SpriteImg, localporta3FechadaSpriteImg;
     private Animation<TextureRegion> animacaoLocalPorta3;
+    private Animation<TextureRegion> animacaoLocalPorta3Fechada;
 
     private Texture localFinalSpriteImg;
     private Animation<TextureRegion> animacaoLocalFinal;
@@ -260,6 +262,7 @@ public class GameScreen implements Screen {
         portinhaImg    = jogo.assets.get("portinha.png",     Texture.class);
         trabalhadorImg = jogo.assets.get("trabalhador.png", Texture.class);
         portaImg       = jogo.assets.get("porta.png",        Texture.class);
+        portaFechadaImg= jogo.assets.get("portaFechada.png", Texture.class);
         trabalhador2Img = jogo.assets.get("trabalhador2.png", Texture.class);
         trabalhador3Img = jogo.assets.get("trabalhador3.png", Texture.class);
         pontoImg       = jogo.assets.get("ponto.png",        Texture.class);
@@ -275,7 +278,9 @@ public class GameScreen implements Screen {
         localportaSpriteImg = jogo.assets.get("localporta_sprite.png", Texture.class);
         inicioSpriteImg = jogo.assets.get("inicio_sprite.png", Texture.class);
         localporta3SpriteImg = jogo.assets.get("localporta3_sprite.png", Texture.class);
+        localporta3FechadaSpriteImg = jogo.assets.get("localporta3Fechada_sprite.png", Texture.class);
         localporta2SpriteImg = jogo.assets.get("localporta2_sprite.png", Texture.class);
+        localporta2FechadaSpriteImg = jogo.assets.get("localporta2Fechada_sprite.png", Texture.class);
         localFinalSpriteImg = jogo.assets.get("localFinal_sprite.png", Texture.class);
 
         //placas
@@ -354,6 +359,15 @@ public class GameScreen implements Screen {
             )
         );
 
+        //local port 2 fechada
+        animacaoLocalPorta2Fechada = new Animation<>(0.10f,
+            extrairFrames(
+                localporta2FechadaSpriteImg,
+                localporta2FechadaSpriteImg.getWidth() / 8,
+                localporta2FechadaSpriteImg.getHeight(),
+                8
+            ));
+
         //animação ceit
         animacaoCeit = new Animation<>(0.15f,
             extrairFrames(
@@ -379,6 +393,15 @@ public class GameScreen implements Screen {
                 localporta3SpriteImg,
                 localporta3SpriteImg.getWidth() / 8,
                 localporta3SpriteImg.getHeight(),
+                8
+            )
+        );
+        //animação local porta 3 fechada
+        animacaoLocalPorta3Fechada = new Animation<>(0.10f,
+            extrairFrames(
+                localporta3FechadaSpriteImg,
+                localporta3FechadaSpriteImg.getWidth() / 8,
+                localporta3FechadaSpriteImg.getHeight(),
                 8
             )
         );
@@ -782,7 +805,11 @@ public class GameScreen implements Screen {
         batch.draw(ceu1Img,        800,  alturaJanela - 259, 800, 259);
         batch.draw(ceu2Img,        1600, alturaJanela - 259, 800, 259);
         batch.draw(ceu1Img,        2400, alturaJanela - 259, 800, 259);
-        batch.draw(portaImg,       3200, 0, 800, alturaJanela - 259); // Porta 1
+        if (jogo.puzzle1Completo){
+            batch.draw(portaFechadaImg, 3200, 0, 800, alturaJanela-259);
+        }else{
+            batch.draw(portaImg,       3200, 0, 800, alturaJanela - 259); // Porta 1
+        }
         batch.draw(ceu2Img,        3200, alturaJanela - 259, 800, 259);
         batch.draw(ceu1Img,        4000, alturaJanela - 259, 800, 259);
 
@@ -790,7 +817,11 @@ public class GameScreen implements Screen {
         batch.draw(frameFabrica,   4800, 0, 800, alturaJanela - 259);
 
         batch.draw(ceu2Img,        4800, alturaJanela - 259, 800, 259);
-        batch.draw(portaImg,       5600, 0, 800, alturaJanela - 259); // Porta 2
+        if (jogo.puzzle2Completo){
+            batch.draw(portaFechadaImg, 5600, 0, 800, alturaJanela-259);
+        }else{
+            batch.draw(portaImg,       5600, 0, 800, alturaJanela - 259); // Porta 2
+        }
         batch.draw(ceu1Img,        5600, alturaJanela - 259, 800, 259);
         batch.draw(ceu2Img,        6400, alturaJanela - 259, 800, 259);
         batch.draw(ceu1Img,        7200, alturaJanela - 259, 800, 259);
@@ -833,10 +864,20 @@ public class GameScreen implements Screen {
         batch.draw(frameInicio, 800, 0, 800, alturaJanela - 259);
 
         TextureRegion frameLocalPorta3 = animacaoLocalPorta3.getKeyFrame(elapsedTime, true);
-        batch.draw(frameLocalPorta3, 5600, 0, 800, alturaJanela - 259);
+        TextureRegion frameLocalPorta3Fechada = animacaoLocalPorta3Fechada.getKeyFrame(elapsedTime, true);
+        if (jogo.puzzle2Completo){
+            batch.draw(frameLocalPorta3Fechada, 5600, 0, 800, alturaJanela - 259);
+        }else{
+            batch.draw(frameLocalPorta3, 5600, 0, 800, alturaJanela - 259);
+        }
 
         TextureRegion frameLocalPorta2 = animacaoLocalPorta2.getKeyFrame(elapsedTime, true);
-        batch.draw(frameLocalPorta2, 3200, 0, 800, alturaJanela - 259);
+        TextureRegion frameLocalPorta2Fechada = animacaoLocalPorta2Fechada.getKeyFrame(elapsedTime, true);
+        if (jogo.puzzle1Completo){
+            batch.draw(frameLocalPorta2Fechada, 3200, 0, 800, alturaJanela-259);
+        }else{
+            batch.draw(frameLocalPorta2, 3200, 0, 800, alturaJanela - 259);
+        }
 
         TextureRegion frameLocalFinal = animacaoLocalFinal.getKeyFrame(elapsedTime, true);
         batch.draw(frameLocalFinal, 6400, 0, 800, alturaJanela - 259);
