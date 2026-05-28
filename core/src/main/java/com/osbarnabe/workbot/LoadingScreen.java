@@ -19,6 +19,7 @@ public class LoadingScreen implements Screen {
     private BitmapFont fonte;
     private OrthographicCamera camera;
     private Viewport viewport;
+    float larguraJanela = Gdx.graphics.getWidth();
 
     // --- ARRAY COM OS TEXTOS DE LOADING TRADUZIDOS ---
     private String[] textosLoading = {
@@ -121,7 +122,7 @@ public class LoadingScreen implements Screen {
 
         batch.begin();
         // Desenha o texto de acordo com o idioma salvo em jogo.idioma
-        fonte.draw(batch, textosLoading[jogo.idioma] + porcentagem + "%", 365f, 960f);
+        fonte.draw(batch, textosLoading[jogo.idioma] + porcentagem + "%", larguraJanela/2 - 230, 960f);
         batch.end();
     }
 

@@ -173,7 +173,7 @@ public class GameScreen implements Screen {
     };
 
     private String[] mensagemBarreiraNPC1 = {
-        "Fale com o trabalho primeiro!",
+        "Fale com o trabalhor primeiro!",
         "¡Habla primero con el trabajador!",
         "Talk to the worker first!"
     };
