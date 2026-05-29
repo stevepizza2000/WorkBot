@@ -122,7 +122,7 @@ public class LoadingScreen implements Screen {
 
         batch.begin();
         // Desenha o texto de acordo com o idioma salvo em jogo.idioma
-        fonte.draw(batch, textosLoading[jogo.idioma] + porcentagem + "%", larguraJanela/2 - 230, 960f);
+        fonte.draw(batch, textosLoading[jogo.idioma] + porcentagem + "%", larguraJanela/2 - 210, 960f);
         batch.end();
     }
 
