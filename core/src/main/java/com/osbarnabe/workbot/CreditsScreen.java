@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator; // 🔥 IMPORTADO: Necessário para carregar fontes TTF
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -85,7 +85,7 @@ public class CreditsScreen implements Screen {
         camera = new OrthographicCamera();
         viewport = new FitViewport(largura, altura, camera);
 
-        // 🔥 MODIFICADO: Criação das fontes usando o arquivo TTF do seu Menu
+        // Criação das fontes
         FreeTypeFontGenerator generator =
             new FreeTypeFontGenerator(Gdx.files.internal("fonts/PixelifySans-SemiBold.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter =

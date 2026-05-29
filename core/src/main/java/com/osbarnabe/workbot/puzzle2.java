@@ -60,11 +60,11 @@ public class puzzle2 implements Screen {
     float pipeWidth = 65f;
     float margem    = 5f;
 
-    // 🔥 TAMANHO DA FACA
+    // TAMANHO DA FACA
     private float facaLargura = 65f;
     private float facaAltura  = 65f;
 
-    // 🤖 TAMANHO DE RENDERIZAÇÃO DO ROBÔ
+    // TAMANHO DE RENDERIZAÇÃO DO ROBÔ
     // Ajustado para manter a proporção do novo robô com asas
     private float larguraBird = 90f;
     private float alturaBird  = 90f;
@@ -323,7 +323,7 @@ public class puzzle2 implements Screen {
             batch.draw(texPipeDown, c.x, bottomHeight - alturaCano, pipeWidth, alturaCano);
             batch.draw(texPipeUp, c.x, topY, pipeWidth, alturaCano);
 
-            // 🔥 DESENHO DA FACA
+            // DESENHO DA FACA
             if (c.temFaca && !pegouFaca) {
 
                 float flutuarY = MathUtils.sin(tempoAnimacao * 4f) * 8f;
@@ -360,7 +360,7 @@ public class puzzle2 implements Screen {
             }
         }
 
-        // 🤖 RENDERIZAÇÃO DO ROBÔ VOADOR (Desenhado DEPOIS dos canos para ele não sumir atrás deles)
+        //RENDERIZAÇÃO DO ROBÔ VOADOR (Desenhado DEPOIS dos canos para ele não sumir atrás deles)
         TextureRegion frameAtualBird = animacaoBird.getKeyFrame(tempoAnimacao, true);
 
         // Aplica uma rotação leve dependendo se ele está caindo ou subindo (efeito Flappy Bird)
@@ -411,7 +411,7 @@ public class puzzle2 implements Screen {
         texPreto.dispose();
     }
 
-    // 🛠️ MÉTODO AUXILIAR PARA CORTAR OS FRAMES DA SPRITE SHEET
+    // metodo pra ajudar no desenho das sprites
     private TextureRegion[] extrairFrames(Texture tex, int lFrame, int aFrame, int qtd) {
         TextureRegion[][] matriz = TextureRegion.split(tex, lFrame, aFrame);
         TextureRegion[] frames   = new TextureRegion[qtd];

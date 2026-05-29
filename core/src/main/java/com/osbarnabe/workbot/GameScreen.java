@@ -1020,10 +1020,10 @@ public class GameScreen implements Screen {
             batch.draw(procuradoImg, xProcurado, yProcurado, larguraProcurado, alturaProcurado);
         }
 
-        // BOTÃO DE INTERAÇÃO NPC3 — original 4780 + 800 = 5580
+        // BOTÃO DE INTERAÇÃO NPC3
         if (pertoDoNPC(npc3X, 400f)) {
 
-            // 🔘 BOTÃO (continua normal)
+            // BOTÃO
             TextureRegion frameBotao = animacaoBotao.getKeyFrame(elapsedTime, true);
 
             float escala = 0.6f;

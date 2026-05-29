@@ -33,7 +33,7 @@ public class Opcoes implements Screen {
     float larguraJanela = Gdx.graphics.getWidth();
     float alturaJanela = Gdx.graphics.getHeight();
 
-    // 🔥 TEXTOS TRADUZIDOS
+    // TEXTOS TRADUZIDOS
     private String[] textosAFK = {
         "As opcoes vao fechar em: ",
         "Las opciones se cerraran en: ",
@@ -57,7 +57,7 @@ public class Opcoes implements Screen {
 
         generator.dispose();
 
-        atualizarTexturasIdioma(); // 🔥 importante
+        atualizarTexturasIdioma(); //
     }
 
     @Override
@@ -139,7 +139,7 @@ public class Opcoes implements Screen {
         batch.draw(opcaoSelecionada == 3 ? btnVoltarSelect : btnVoltar,
             larguraJanela/2 - 180, alturaJanela/2 - 500, 400, 200);
 
-        // 🔥 AFK traduzido
+        // AFK traduzido
         if (tempoAFK <= 5f && tempoAFK > 0f) {
             int seg = (int) Math.ceil(tempoAFK);
             fonteAFK.getData().setScale(2f);
@@ -159,7 +159,7 @@ public class Opcoes implements Screen {
         batch.end();
     }
 
-    // 🔥 TROCA DINÂMICA DE TEXTURAS
+    //TROCA DE TEXTURAS
     private void atualizarTexturasIdioma() {
 
         // Limpa antigas

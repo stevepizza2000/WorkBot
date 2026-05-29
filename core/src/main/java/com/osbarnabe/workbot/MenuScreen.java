@@ -36,7 +36,7 @@ public class MenuScreen implements Screen {
     private float tempoPressionado = 0;
     private boolean processouBotao = false;
 
-    // 🔥 TEXTOS TRADUZIDOS
+    // TEXTOS TRADUZIDOS
     private String[] textosAFK = {
         "O jogo vai fechar em: ",
         "El juego se cerrara en: ",
@@ -62,7 +62,7 @@ public class MenuScreen implements Screen {
 
         fundo = new Texture("fundo.png");
 
-        atualizarTexturasIdioma(); // 🔥 importante
+        atualizarTexturasIdioma(); //
     }
 
     @Override
@@ -129,7 +129,7 @@ public class MenuScreen implements Screen {
         batch.draw(opcaoSelecionada == 2 ? btnOpcaoSelect : btnOpcao,
             larguraJanela/2 - 180, 30, 400, 200);
 
-        // 🔥 AFK traduzido
+        // AFK traduzido
         if (tempoAFK <= 5f && tempoAFK > 0f) {
             int seg = (int) Math.ceil(tempoAFK);
             fonteAFK.getData().setScale(2f);
@@ -149,7 +149,7 @@ public class MenuScreen implements Screen {
         batch.end();
     }
 
-    // 🔥 TROCA DE IMAGENS POR IDIOMA
+    // TROCA DE IMAGENS POR IDIOMA
     private void atualizarTexturasIdioma() {
 
         if (btnInicio != null) {
