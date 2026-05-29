@@ -116,7 +116,7 @@ public class puzzle2 implements Screen {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter =
             new FreeTypeFontGenerator.FreeTypeFontParameter();
 
-        parameter.size = 20;
+        parameter.size = 16;
         parameter.color = Color.WHITE;
 
         font = generator.generateFont(parameter);
