@@ -27,7 +27,7 @@ public class CreditsScreen implements Screen {
     private Texture btnVoltar;
     private Texture btnVoltarSelect;
 
-    private Texture estereggDipp, estereggCosta, estereggBiondo;
+    private Texture estereggDipp, estereggCosta, estereggBiondo, qrCode;
 
     private boolean botaoSelecionado = false;
 
@@ -69,6 +69,18 @@ public class CreditsScreen implements Screen {
         "Special Thanks"
     };
 
+    private String[] jogoMobile = {
+        "Para continuar jogando \nbaixe nosso jogo no seu celular",
+        "Para seguir jugando, descarga nuestro\n juego en tu teléfono móvil",
+        "To continue playing, download our \ngame on your mobile phone"
+    };
+
+    private String[] ajudaQrCode = {
+        "Clique no arquivo .apk após escanear o código QR",
+        "Haz clic en el archivo .apk después de escanear el código QR",
+        "Click on the .apk file after scanning the QR code"
+    };
+
     public CreditsScreen(Main jogo) {
 
         float largura = Gdx.graphics.getWidth();
@@ -81,6 +93,8 @@ public class CreditsScreen implements Screen {
         estereggDipp = new Texture("dipp.png");
         estereggCosta = new Texture("costa.png");
         estereggBiondo = new Texture("biondo.png");
+
+        qrCode = new Texture("qrcodeJogoMobile.png");
 
         camera = new OrthographicCamera();
         viewport = new FitViewport(largura, altura, camera);
@@ -280,10 +294,18 @@ public class CreditsScreen implements Screen {
             150f
         );
 
+        espacamentoY -= 300;
+
+        fonteNome.draw(batch, jogoMobile[jogo.idioma], 10, espacamentoY, largura, Align.center, false);
+
+        batch.draw(qrCode, (largura/2f) - 150, espacamentoY- 400, 300,300);
+
+        fonteNome.draw(batch, ajudaQrCode[jogo.idioma], 10, espacamentoY- 550, largura, Align.center, false);
+
         batch.draw(
             estereggDipp,
             0,
-            espacamentoY - 1680f,
+            espacamentoY - 1400f,
             50f,
             50f
         );
@@ -291,7 +313,7 @@ public class CreditsScreen implements Screen {
         batch.draw(
             estereggCosta,
             50,
-            espacamentoY - 1680f,
+            espacamentoY - 1400f,
             50f,
             50f
         );
@@ -299,7 +321,7 @@ public class CreditsScreen implements Screen {
         batch.draw(
             estereggBiondo,
             100,
-            espacamentoY - 1680f,
+            espacamentoY - 1400f,
             50f,
             50f
         );
@@ -357,5 +379,7 @@ public class CreditsScreen implements Screen {
         estereggDipp.dispose();
         estereggCosta.dispose();
         estereggBiondo.dispose();
+
+        qrCode.dispose();
     }
 }
