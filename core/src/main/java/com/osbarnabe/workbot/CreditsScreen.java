@@ -24,6 +24,7 @@ public class CreditsScreen implements Screen {
 
     private BitmapFont fonteCargo;
     private BitmapFont fonteNome;
+    private BitmapFont fonteAFK;
 
 
     private Texture btnVoltar;
@@ -116,6 +117,8 @@ public class CreditsScreen implements Screen {
             new FreeTypeFontGenerator(Gdx.files.internal("fonts/PixelifySans-SemiBold.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter =
             new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+        fonteAFK = generator.generateFont(parameter);
 
         // Configuração da fonte dos Cargos (Tamanho base 16 + Cor Amarela)
         parameter.size = 16;
@@ -349,17 +352,17 @@ public class CreditsScreen implements Screen {
             int seg = (int) Math.ceil(tempoAFK);
             String mensagemAFK = textosAFK[jogo.idioma] + seg;
 
-            fonteNome.getData().setScale(2.5f);
-            fonteNome.setColor(Color.WHITE);
+            fonteAFK.getData().setScale(2.5f);
+            fonteAFK.setColor(Color.WHITE);
 
-            GlyphLayout layoutAFK = new GlyphLayout(fonteNome, mensagemAFK);
+            GlyphLayout layoutAFK = new GlyphLayout(fonteAFK, mensagemAFK);
 
             float textoX = camera.position.x - (layoutAFK.width / 2f);
             float textoY = camera.position.y + 800f;
 
-            fonteNome.draw(batch, mensagemAFK, textoX, textoY, layoutAFK.width, Align.center, false);
+            fonteAFK.draw(batch, mensagemAFK, textoX, textoY, layoutAFK.width, Align.center, false);
 
-            fonteNome.getData().setScale(1f);
+            fonteAFK.getData().setScale(1f);
         }
 
         batch.end();
