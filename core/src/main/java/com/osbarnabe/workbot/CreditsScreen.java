@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Align;
@@ -24,6 +25,7 @@ public class CreditsScreen implements Screen {
     private BitmapFont fonteCargo;
     private BitmapFont fonteNome;
 
+
     private Texture btnVoltar;
     private Texture btnVoltarSelect;
 
@@ -34,6 +36,10 @@ public class CreditsScreen implements Screen {
     private float rolagemY = -200f;
     private final float velocidadeRolagem = 150f;
     private final float limiteRolagem = 4050f;
+
+    //cronometro afk
+    private float tempoAFK = 30f;
+    private float limiteAFK = 0f;
 
     // =========================
     // TEXTOS LOCALIZADOS
@@ -70,15 +76,21 @@ public class CreditsScreen implements Screen {
     };
 
     private String[] jogoMobile = {
-        "Para continuar jogando \nbaixe nosso jogo no seu celular",
-        "Para seguir jugando, descarga nuestro\n juego en tu teléfono móvil",
-        "To continue playing, download our \ngame on your mobile phone"
+        "Para continuar jogando \nbaixe nosso jogo no seu celular Android",
+        "Para seguir jugando, descarga nuestro \njuego en tu teléfono Android.",
+        "To keep playing, download our \ngame on your Android phone"
     };
 
     private String[] ajudaQrCode = {
         "Clique no arquivo .apk após escanear o código QR",
         "Haz clic en el archivo .apk después de escanear el código QR",
         "Click on the .apk file after scanning the QR code"
+    };
+
+    private String[] textosAFK = {
+        "Os créditos vão fechar em: ",    // PT
+        "Los créditos se cerrarán en: ",  // ES
+        "The credits will close in: "   // EN
     };
 
     public CreditsScreen(Main jogo) {
@@ -141,6 +153,12 @@ public class CreditsScreen implements Screen {
         // Acelera rolagem
         if ((esq || dir) && rolagemY < limiteRolagem) {
             rolagemY += (velocidadeRolagem * 6f) * delta;
+            tempoAFK = 25f;
+        }else {
+            tempoAFK -= delta;
+            if (tempoAFK <= limiteAFK){
+                jogo.setScreen(new MenuScreen(jogo));
+            }
         }
 
         // Voltar ao menu
@@ -325,6 +343,24 @@ public class CreditsScreen implements Screen {
             50f,
             50f
         );
+
+        //mensagem afk
+        if (tempoAFK <= 5f && tempoAFK > 0f) {
+            int seg = (int) Math.ceil(tempoAFK);
+            String mensagemAFK = textosAFK[jogo.idioma] + seg;
+
+            fonteNome.getData().setScale(2.5f);
+            fonteNome.setColor(Color.WHITE);
+
+            GlyphLayout layoutAFK = new GlyphLayout(fonteNome, mensagemAFK);
+
+            float textoX = camera.position.x - (layoutAFK.width / 2f);
+            float textoY = camera.position.y + 800f;
+
+            fonteNome.draw(batch, mensagemAFK, textoX, textoY, layoutAFK.width, Align.center, false);
+
+            fonteNome.getData().setScale(1f);
+        }
 
         batch.end();
     }
