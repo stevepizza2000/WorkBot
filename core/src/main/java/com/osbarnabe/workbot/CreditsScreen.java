@@ -156,7 +156,7 @@ public class CreditsScreen implements Screen {
         // Acelera rolagem
         if ((esq || dir) && rolagemY < limiteRolagem) {
             rolagemY += (velocidadeRolagem * 6f) * delta;
-            tempoAFK = 25f;
+            tempoAFK = 30f;
         }else {
             tempoAFK -= delta;
             if (tempoAFK <= limiteAFK){
@@ -167,6 +167,10 @@ public class CreditsScreen implements Screen {
         // Voltar ao menu
         if (botaoSelecionado && esq && dir) {
             jogo.setScreen(new MenuScreen(jogo));
+        }
+
+        if (botaoSelecionado && esq || botaoSelecionado && dir) {
+            tempoAFK = 30f;
         }
 
         camera.update();
